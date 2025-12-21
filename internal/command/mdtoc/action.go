@@ -3,6 +3,7 @@ package mdtoc
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -25,13 +26,13 @@ func action(ctx context.Context, cmd *cli.Command) error {
 
 	// 验证层级参数
 	if minLevel < 1 || minLevel > 6 {
-		return fmt.Errorf("min-level 必须在 1-6 之间")
+		return errors.New("min-level 必须在 1-6 之间")
 	}
 	if maxLevel < 1 || maxLevel > 6 {
-		return fmt.Errorf("max-level 必须在 1-6 之间")
+		return errors.New("max-level 必须在 1-6 之间")
 	}
 	if minLevel > maxLevel {
-		return fmt.Errorf("min-level 不能大于 max-level")
+		return errors.New("min-level 不能大于 max-level")
 	}
 
 	// 收集要处理的文件
@@ -44,8 +45,8 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	// 创建基础选项
 	// 默认启用章节模式 (SectionTOC=true)，只有指定 --global 才使用全局模式
 	baseOpts := mdtoc.Options{
-		MinLevel:   int(minLevel),
-		MaxLevel:   int(maxLevel),
+		MinLevel:   minLevel,
+		MaxLevel:   maxLevel,
 		Ordered:    ordered,
 		LineNumber: lineNumber,
 		ShowPath:   showPath,
@@ -120,9 +121,9 @@ func processDelete(toc *mdtoc.TOC, files []string) error {
 		}
 
 		if deleted {
-			fmt.Printf("%s: TOC 已删除\n", file)
+			_, _ = os.Stdout.WriteString(file + ": TOC 已删除\n")
 		} else {
-			fmt.Printf("%s: 无 TOC 标记\n", file)
+			_, _ = os.Stdout.WriteString(file + ": 无 TOC 标记\n")
 		}
 	}
 
@@ -151,9 +152,9 @@ func processInPlace(toc *mdtoc.TOC, files []string) error {
 		}
 
 		if hasMarker {
-			fmt.Printf("%s: 已更新\n", file)
+			_, _ = os.Stdout.WriteString(file + ": 已更新\n")
 		} else {
-			fmt.Printf("%s: 已插入 (在第一个标题后)\n", file)
+			_, _ = os.Stdout.WriteString(file + ": 已插入 (在第一个标题后)\n")
 		}
 	}
 
@@ -181,7 +182,7 @@ func processStdout(baseOpts mdtoc.Options, files []string) error {
 
 		if opts.SectionTOC {
 			// 章节模式：预览每个 H1 的子目录
-			content, readErr := os.ReadFile(file)
+			content, readErr := os.ReadFile(file) //nolint:gosec // G304: file path from user input is intentional
 			if readErr != nil {
 				fmt.Fprintf(os.Stderr, "%s: %v\n", file, readErr)
 				continue
@@ -203,14 +204,14 @@ func processStdout(baseOpts mdtoc.Options, files []string) error {
 
 		// 多文件时添加文件名标题
 		if len(files) > 1 {
-			fmt.Printf("## %s\n\n", file)
+			_, _ = os.Stdout.WriteString("## " + file + "\n\n")
 		}
 
-		fmt.Println(tocStr)
+		_, _ = os.Stdout.WriteString(tocStr + "\n")
 
 		// 多文件时添加分隔
 		if len(files) > 1 && i < len(files)-1 {
-			fmt.Println()
+			_, _ = os.Stdout.WriteString("\n")
 		}
 	}
 
@@ -220,7 +221,7 @@ func processStdout(baseOpts mdtoc.Options, files []string) error {
 // checkFileExists 检查文件是否存在
 func checkFileExists(file string) error {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		return fmt.Errorf("文件不存在")
+		return errors.New("文件不存在")
 	}
 	return nil
 }

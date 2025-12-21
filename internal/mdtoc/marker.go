@@ -110,17 +110,18 @@ func (h *MarkerHandler) InsertTOC(content []byte, toc string) []byte {
 		// 两个标记：替换两个标记之间的内容
 		skipNextEmpty := false
 		for i, line := range lines {
-			if i < markers.StartLine {
+			switch {
+			case i < markers.StartLine:
 				result = append(result, line)
-			} else if i == markers.StartLine {
+			case i == markers.StartLine:
 				result = append(result, line)
 				result = append(result, []byte(""))
 				result = append(result, []byte(toc))
 				result = append(result, []byte(""))
-			} else if i == markers.EndLine {
+			case i == markers.EndLine:
 				result = append(result, line)
 				skipNextEmpty = true // 标记：跳过结束标记后的第一个空行
-			} else if i > markers.EndLine {
+			case i > markers.EndLine:
 				// 跳过结束标记后紧跟的空行，避免空行累积
 				if skipNextEmpty && len(bytes.TrimSpace(line)) == 0 {
 					skipNextEmpty = false
@@ -213,7 +214,7 @@ func (h *MarkerHandler) InsertTOCAfterFirstHeading(content []byte, toc string) [
 	}
 
 	lines := bytes.Split(content, []byte("\n"))
-	var result [][]byte
+	result := make([][]byte, 0, len(lines)+6)
 
 	insertLine := firstHeading // 在标题行后插入
 
@@ -232,7 +233,7 @@ func (h *MarkerHandler) InsertTOCAfterFirstHeading(content []byte, toc string) [
 
 	// 如果没有找到标题 (firstHeading == -1)，在开头插入
 	if firstHeading == -1 {
-		var newResult [][]byte
+		newResult := make([][]byte, 0, len(result)+6)
 		newResult = append(newResult, []byte(h.marker))
 		newResult = append(newResult, []byte(""))
 		newResult = append(newResult, []byte(toc))
@@ -298,7 +299,7 @@ func (h *MarkerHandler) InsertSectionTOCs(content []byte, sectionTOCs []SectionT
 	}
 
 	lines := bytes.Split(content, []byte("\n"))
-	var result [][]byte
+	result := make([][]byte, 0, len(lines)+len(sectionTOCs)*7)
 
 	// 创建 H1 行号到 TOC 的映射
 	h1ToTOC := make(map[int]string)
@@ -452,7 +453,7 @@ func (h *MarkerHandler) CleanTOCBlocks(content []byte) ([]byte, []TOCBlockInfo) 
 
 	// 收集 TOC 块信息并标记要删除的行
 	deleteLines := make(map[int]bool)
-	var blockInfos []TOCBlockInfo
+	blockInfos := make([]TOCBlockInfo, 0, len(existingBlocks))
 
 	for _, block := range existingBlocks {
 		// 标记 TOC 块内所有行需要删除
@@ -489,7 +490,7 @@ func (h *MarkerHandler) CleanTOCBlocks(content []byte) ([]byte, []TOCBlockInfo) 
 	}
 
 	// 构建干净的内容
-	var cleanedLines [][]byte
+	cleanedLines := make([][]byte, 0, len(lines))
 	for i, line := range lines {
 		if !deleteLines[i] {
 			cleanedLines = append(cleanedLines, line)
@@ -563,85 +564,6 @@ func (h *MarkerHandler) InsertTOCWithCleanup(content []byte, toc string) []byte 
 	return h.insertTOCWithExtraMarkersCleanup(content, allMarkers, toc)
 }
 
-// insertTOCAfterSingleMarker 在单个标记后插入 TOC
-func (h *MarkerHandler) insertTOCAfterSingleMarker(content []byte, markerLine int, toc string) []byte {
-	lines := bytes.Split(content, []byte("\n"))
-	var result [][]byte
-
-	for i, line := range lines {
-		result = append(result, line)
-		if i == markerLine {
-			// 在标记后插入 TOC
-			result = append(result, []byte(""))
-			result = append(result, []byte(toc))
-			result = append(result, []byte(""))
-			result = append(result, []byte(h.marker))
-		}
-	}
-
-	return bytes.Join(result, []byte("\n"))
-}
-
-// insertTOCWithExtraMarkersCleanup 处理有多个标记的情况
-func (h *MarkerHandler) insertTOCWithExtraMarkersCleanup(content []byte, allMarkers []int, toc string) []byte {
-	lines := bytes.Split(content, []byte("\n"))
-
-	// 如果只有两个标记，使用原始的 InsertTOC 方法
-	if len(allMarkers) == 2 {
-		return h.InsertTOC(content, toc)
-	}
-
-	// 如果有更多标记，我们需要：
-	// 1. 使用前两个标记作为 TOC 区域
-	// 2. 删除所有后续的标记和它们之间的内容
-
-	var result [][]byte
-
-	// 添加第一个标记之前的内容
-	for i := 0; i < allMarkers[0]; i++ {
-		result = append(result, lines[i])
-	}
-
-	// 添加第一个标记和 TOC 内容
-	result = append(result, lines[allMarkers[0]])
-	result = append(result, []byte(""))
-	result = append(result, []byte(toc))
-	result = append(result, []byte(""))
-
-	// 添加第二个标记（跳过两个标记之间的所有内容）
-	result = append(result, lines[allMarkers[1]])
-
-	// 添加第二个标记之后的内容，跳过所有后续标记及其之间的内容
-	markerIndex := 2 // 从第三个标记开始
-	skipUntil := -1  // 如果处于跳过模式，记录跳过到的行号
-
-	for i := allMarkers[1] + 1; i < len(lines); i++ {
-		// 如果遇到后续标记，开始跳过
-		if markerIndex < len(allMarkers) && i == allMarkers[markerIndex] {
-			// 如果下一个标记存在，跳过到下一个标记
-			if markerIndex+1 < len(allMarkers) {
-				skipUntil = allMarkers[markerIndex+1]
-			}
-			markerIndex++
-			continue
-		}
-
-		// 如果正在跳过，继续跳过
-		if i <= skipUntil {
-			continue
-		}
-
-		// 重置跳过状态
-		if i > skipUntil {
-			skipUntil = -1
-		}
-
-		result = append(result, lines[i])
-	}
-
-	return bytes.Join(result, []byte("\n"))
-}
-
 // ValidateMarkers 检查文档中的标记是否有效
 // 返回：是否有效、标记总数、错误信息
 func (h *MarkerHandler) ValidateMarkers(content []byte) (bool, int, string) {
@@ -687,4 +609,83 @@ func (h *MarkerHandler) CleanupOrphanMarkers(content []byte) ([]byte, int) {
 	}
 
 	return bytes.Join(result, []byte("\n")), 1
+}
+
+// insertTOCAfterSingleMarker 在单个标记后插入 TOC
+func (h *MarkerHandler) insertTOCAfterSingleMarker(content []byte, markerLine int, toc string) []byte {
+	lines := bytes.Split(content, []byte("\n"))
+	result := make([][]byte, 0, len(lines)+4)
+
+	for i, line := range lines {
+		result = append(result, line)
+		if i == markerLine {
+			// 在标记后插入 TOC
+			result = append(result, []byte(""))
+			result = append(result, []byte(toc))
+			result = append(result, []byte(""))
+			result = append(result, []byte(h.marker))
+		}
+	}
+
+	return bytes.Join(result, []byte("\n"))
+}
+
+// insertTOCWithExtraMarkersCleanup 处理有多个标记的情况
+func (h *MarkerHandler) insertTOCWithExtraMarkersCleanup(content []byte, allMarkers []int, toc string) []byte {
+	lines := bytes.Split(content, []byte("\n"))
+
+	// 如果只有两个标记，使用原始的 InsertTOC 方法
+	if len(allMarkers) == 2 {
+		return h.InsertTOC(content, toc)
+	}
+
+	// 如果有更多标记，我们需要：
+	// 1. 使用前两个标记作为 TOC 区域
+	// 2. 删除所有后续的标记和它们之间的内容
+
+	result := make([][]byte, 0, len(lines))
+
+	// 添加第一个标记之前的内容
+	for i := range allMarkers[0] {
+		result = append(result, lines[i])
+	}
+
+	// 添加第一个标记和 TOC 内容
+	result = append(result, lines[allMarkers[0]])
+	result = append(result, []byte(""))
+	result = append(result, []byte(toc))
+	result = append(result, []byte(""))
+
+	// 添加第二个标记（跳过两个标记之间的所有内容）
+	result = append(result, lines[allMarkers[1]])
+
+	// 添加第二个标记之后的内容，跳过所有后续标记及其之间的内容
+	markerIndex := 2 // 从第三个标记开始
+	skipUntil := -1  // 如果处于跳过模式，记录跳过到的行号
+
+	for i := allMarkers[1] + 1; i < len(lines); i++ {
+		// 如果遇到后续标记，开始跳过
+		if markerIndex < len(allMarkers) && i == allMarkers[markerIndex] {
+			// 如果下一个标记存在，跳过到下一个标记
+			if markerIndex+1 < len(allMarkers) {
+				skipUntil = allMarkers[markerIndex+1]
+			}
+			markerIndex++
+			continue
+		}
+
+		// 如果正在跳过，继续跳过
+		if i <= skipUntil {
+			continue
+		}
+
+		// 重置跳过状态
+		if i > skipUntil {
+			skipUntil = -1
+		}
+
+		result = append(result, lines[i])
+	}
+
+	return bytes.Join(result, []byte("\n"))
 }

@@ -25,7 +25,7 @@ func New(opts Options) *TOC {
 
 // GenerateFromFile 从文件生成 TOC 字符串
 func (t *TOC) GenerateFromFile(filename string) (string, error) {
-	content, err := os.ReadFile(filename)
+	content, err := os.ReadFile(filename) //nolint:gosec // G304: file path from user input is intentional
 	if err != nil {
 		return "", err
 	}
@@ -180,8 +180,10 @@ func (t *TOC) GenerateSectionTOCsPreview(content []byte) (string, error) {
 
 // UpdateFile 原地更新文件中的 TOC
 // 如果文件没有 TOC 标记，会自动在第一个标题后插入
+//
+//nolint:nestif // Complex nesting is clearer here for section/global mode branching
 func (t *TOC) UpdateFile(filename string) error {
-	content, err := os.ReadFile(filename)
+	content, err := os.ReadFile(filename) //nolint:gosec // G304: file path from user input is intentional
 	if err != nil {
 		return err
 	}
@@ -216,12 +218,12 @@ func (t *TOC) UpdateFile(filename string) error {
 		}
 	}
 
-	return os.WriteFile(filename, newContent, 0644)
+	return os.WriteFile(filename, newContent, 0600)
 }
 
 // HasMarker 检查文件是否包含 TOC 标记
 func (t *TOC) HasMarker(filename string) (bool, error) {
-	content, err := os.ReadFile(filename)
+	content, err := os.ReadFile(filename) //nolint:gosec // G304: file path from user input is intentional
 	if err != nil {
 		return false, err
 	}
@@ -232,7 +234,7 @@ func (t *TOC) HasMarker(filename string) (bool, error) {
 // DeleteTOC 删除文件中的所有 TOC 块
 // 返回是否有内容被删除
 func (t *TOC) DeleteTOC(filename string) (bool, error) {
-	content, err := os.ReadFile(filename)
+	content, err := os.ReadFile(filename) //nolint:gosec // G304: file path from user input is intentional
 	if err != nil {
 		return false, err
 	}
@@ -245,7 +247,7 @@ func (t *TOC) DeleteTOC(filename string) (bool, error) {
 	}
 
 	// 写入清理后的内容
-	if err := os.WriteFile(filename, cleanContent, 0644); err != nil {
+	if err := os.WriteFile(filename, cleanContent, 0600); err != nil {
 		return false, err
 	}
 

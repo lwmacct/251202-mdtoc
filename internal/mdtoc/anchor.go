@@ -9,16 +9,16 @@ import (
 
 // 预编译的正则表达式（程序启动时只编译一次）
 var (
-	htmlTagRe      = regexp.MustCompile(`<[^>]*>`)
-	hyphensRe      = regexp.MustCompile(`-+`)
-	boldDoubleRe   = regexp.MustCompile(`\*\*(.+?)\*\*`)
-	italicStarRe   = regexp.MustCompile(`\*(.+?)\*`)
-	boldUnderRe    = regexp.MustCompile(`__(.+?)__`)
-	italicUnderRe  = regexp.MustCompile(`(?:^|[\s])_([^_]+?)_(?:[\s]|$)`)
-	strikeRe       = regexp.MustCompile(`~~(.+?)~~`)
-	codeRe         = regexp.MustCompile("`(.+?)`")
-	linkRe         = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
-	imgRe          = regexp.MustCompile(`!\[([^\]]*)\]\([^)]+\)`)
+	htmlTagRe     = regexp.MustCompile(`<[^>]*>`)
+	hyphensRe     = regexp.MustCompile(`-+`)
+	boldDoubleRe  = regexp.MustCompile(`\*\*(.+?)\*\*`)
+	italicStarRe  = regexp.MustCompile(`\*(.+?)\*`)
+	boldUnderRe   = regexp.MustCompile(`__(.+?)__`)
+	italicUnderRe = regexp.MustCompile(`(?:^|[\s])_([^_]+?)_(?:[\s]|$)`)
+	strikeRe      = regexp.MustCompile(`~~(.+?)~~`)
+	codeRe        = regexp.MustCompile("`(.+?)`")
+	linkRe        = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
+	imgRe         = regexp.MustCompile(`!\[([^\]]*)\]\([^)]+\)`)
 )
 
 // AnchorGenerator 生成 GitHub 风格的 anchor link

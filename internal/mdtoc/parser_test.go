@@ -49,7 +49,7 @@ func TestParser_Parse(t *testing.T) {
 			},
 		},
 		{
-			name: "headers in code block ignored",
+			name:    "headers in code block ignored",
 			content: "# Real Header\n```\n# Not a header\n```\n## Another Header",
 			opts:    DefaultOptions(),
 			expected: []*Header{
@@ -151,9 +151,9 @@ More content...
 		line    int
 		endLine int
 	}{
-		{"Title", 1, 7},      // H1 包含所有 H2 子内容
-		{"Section 1", 3, 5},  // H2 到下一个 H2 前
-		{"Section 2", 6, 7},  // H2 到文件末尾
+		{"Title", 1, 7},     // H1 包含所有 H2 子内容
+		{"Section 1", 3, 5}, // H2 到下一个 H2 前
+		{"Section 2", 6, 7}, // H2 到文件末尾
 	}
 
 	if len(got) != len(expected) {
@@ -200,9 +200,9 @@ func TestSplitSections(t *testing.T) {
 		name     string
 		headers  []*Header
 		expected []struct {
-			h1Text      string
-			subCount    int
-			subTexts    []string
+			h1Text   string
+			subCount int
+			subTexts []string
 		}
 	}{
 		{
@@ -259,7 +259,7 @@ func TestSplitSections(t *testing.T) {
 			},
 		},
 		{
-			name:    "no H1 headers",
+			name: "no H1 headers",
 			headers: []*Header{
 				{Level: 2, Text: "Section 1"},
 				{Level: 2, Text: "Section 2"},
@@ -364,8 +364,8 @@ More content...
 				line    int
 				endLine int
 			}{
-				{"Title", 5, 11},     // H1 at line 5 (after 4 lines of frontmatter)
-				{"Section 1", 7, 9},  // H2 at line 7
+				{"Title", 5, 11},      // H1 at line 5 (after 4 lines of frontmatter)
+				{"Section 1", 7, 9},   // H2 at line 7
 				{"Section 2", 10, 11}, // H2 at line 10
 			},
 		},
@@ -386,8 +386,8 @@ Content here
 				line    int
 				endLine int
 			}{
-				{"Real Title", 6, 9},  // H1 at line 6
-				{"Section 1", 8, 9},   // H2 at line 8
+				{"Real Title", 6, 9}, // H1 at line 6
+				{"Section 1", 8, 9},  // H2 at line 8
 			},
 		},
 		{
@@ -436,7 +436,7 @@ More content
 				endLine int
 			}{
 				{"Page Title", 5, 11},      // H1 at line 5
-				{"First Section", 7, 9},   // H2 at line 7
+				{"First Section", 7, 9},    // H2 at line 7
 				{"Second Section", 10, 11}, // H2 at line 10
 			},
 		},
@@ -455,9 +455,9 @@ More content...
 				line    int
 				endLine int
 			}{
-				{"Title", 1, 7},      // H1 at line 1
-				{"Section 1", 3, 5},  // H2 at line 3
-				{"Section 2", 6, 7},  // H2 at line 6
+				{"Title", 1, 7},     // H1 at line 1
+				{"Section 1", 3, 5}, // H2 at line 3
+				{"Section 2", 6, 7}, // H2 at line 6
 			},
 		},
 	}
@@ -525,9 +525,9 @@ More content
 		line    int
 		endLine int
 	}{
-		{"Main Title", 6, 18},  // H1 at line 6
-		{"Section 1", 14, 16},  // H2 at line 14
-		{"Section 2", 17, 18},  // H2 at line 17
+		{"Main Title", 6, 18}, // H1 at line 6
+		{"Section 1", 14, 16}, // H2 at line 14
+		{"Section 2", 17, 18}, // H2 at line 17
 	}
 
 	if len(got) != len(expected) {

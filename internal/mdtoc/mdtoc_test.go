@@ -232,6 +232,8 @@ func TestTOC_EmptyAndEdgeCases(t *testing.T) {
 }
 
 // TestTOC_FileOperations 测试文件操作功能
+//
+//nolint:gocyclo,maintidx // Test function with many sub-tests, high complexity is acceptable
 func TestTOC_FileOperations(t *testing.T) {
 	// 创建临时目录
 	tmpDir := t.TempDir()
@@ -239,7 +241,7 @@ func TestTOC_FileOperations(t *testing.T) {
 	t.Run("GenerateFromFile", func(t *testing.T) {
 		content := "# Title\n## Section 1\n## Section 2"
 		filePath := filepath.Join(tmpDir, "test.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -266,14 +268,14 @@ func TestTOC_FileOperations(t *testing.T) {
 		// 有标记的文件
 		withMarker := "# Title\n<!--TOC-->\n## Section"
 		withPath := filepath.Join(tmpDir, "with_marker.md")
-		if err := os.WriteFile(withPath, []byte(withMarker), 0644); err != nil {
+		if err := os.WriteFile(withPath, []byte(withMarker), 0600); err != nil {
 			t.Fatal(err)
 		}
 
 		// 无标记的文件
 		withoutMarker := "# Title\n## Section"
 		withoutPath := filepath.Join(tmpDir, "without_marker.md")
-		if err := os.WriteFile(withoutPath, []byte(withoutMarker), 0644); err != nil {
+		if err := os.WriteFile(withoutPath, []byte(withoutMarker), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -310,7 +312,7 @@ Old TOC content
 ## Section 2
 `
 		filePath := filepath.Join(tmpDir, "update_with_marker.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -319,7 +321,7 @@ Old TOC content
 			t.Fatal(err)
 		}
 
-		updated, _ := os.ReadFile(filePath)
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 		updatedStr := string(updated)
 
 		if !strings.Contains(updatedStr, "[Section 1]") {
@@ -338,7 +340,7 @@ Old TOC content
 ## Section 2
 `
 		filePath := filepath.Join(tmpDir, "update_without_marker.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -347,7 +349,7 @@ Old TOC content
 			t.Fatal(err)
 		}
 
-		updated, _ := os.ReadFile(filePath)
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 		updatedStr := string(updated)
 
 		// 应该自动插入 TOC 标记
@@ -369,7 +371,7 @@ Old TOC content
 ## Section 2.1
 `
 		filePath := filepath.Join(tmpDir, "update_section_mode.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -383,7 +385,7 @@ Old TOC content
 			t.Fatal(err)
 		}
 
-		updated, _ := os.ReadFile(filePath)
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 		updatedStr := string(updated)
 
 		// 每个章节后应该有独立的 TOC
@@ -417,7 +419,7 @@ Content here...
 More content...
 `
 		filePath := filepath.Join(tmpDir, "delete_with_marker.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -430,7 +432,7 @@ More content...
 			t.Error("DeleteTOC() should return true when TOC was deleted")
 		}
 
-		updated, _ := os.ReadFile(filePath)
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 		updatedStr := string(updated)
 
 		// TOC 标记应该被删除
@@ -458,7 +460,7 @@ More content...
 Content here...
 `
 		filePath := filepath.Join(tmpDir, "delete_without_marker.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -472,7 +474,7 @@ Content here...
 		}
 
 		// 文件内容应该保持不变
-		updated, _ := os.ReadFile(filePath)
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 		if string(updated) != content {
 			t.Error("File without TOC should remain unchanged after DeleteTOC()")
 		}
@@ -505,7 +507,7 @@ Content...
 More content...
 `
 		filePath := filepath.Join(tmpDir, "delete_multiple_toc.md")
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -518,7 +520,7 @@ More content...
 			t.Error("DeleteTOC() should return true when TOCs were deleted")
 		}
 
-		updated, _ := os.ReadFile(filePath)
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 		updatedStr := string(updated)
 
 		// 所有 TOC 标记都应该被删除
@@ -643,11 +645,11 @@ func BenchmarkTOC_Generate(b *testing.B) {
 	var sb strings.Builder
 	for i := range 100 {
 		sb.WriteString("# Chapter ")
-		sb.WriteString(string(rune('A' + i%26)))
+		sb.WriteRune(rune('A' + i%26))
 		sb.WriteString("\n\n")
 		for j := range 10 {
 			sb.WriteString("## Section ")
-			sb.WriteString(string(rune('0' + j)))
+			sb.WriteRune(rune('0' + j))
 			sb.WriteString("\n\nContent here...\n\n")
 		}
 	}
@@ -666,8 +668,8 @@ func BenchmarkTOC_Generate(b *testing.B) {
 // TestTOC_LineNumbers_WithFrontmatter 测试带 YAML frontmatter 的文件行号计算
 func TestTOC_LineNumbers_WithFrontmatter(t *testing.T) {
 	tests := []struct {
-		name            string
-		content         string
+		name             string
+		content          string
 		expectedLineNums []string // 期望的行号格式 (如 `:5+7`, `:7+3`)
 	}{
 		{
@@ -765,8 +767,8 @@ func TestTOC_UpdateFile_WithFrontmatter(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	tests := []struct {
-		name            string
-		content         string
+		name             string
+		content          string
 		expectedLineNums []string
 	}{
 		{
@@ -811,7 +813,7 @@ Second section content
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			filePath := filepath.Join(tmpDir, tt.name+".md")
-			if err := os.WriteFile(filePath, []byte(tt.content), 0644); err != nil {
+			if err := os.WriteFile(filePath, []byte(tt.content), 0600); err != nil {
 				t.Fatal(err)
 			}
 
@@ -826,7 +828,7 @@ Second section content
 				t.Fatal(err)
 			}
 
-			updated, _ := os.ReadFile(filePath)
+			updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 			updatedStr := string(updated)
 
 			for _, lineNum := range tt.expectedLineNums {
@@ -912,7 +914,7 @@ Content here
 More content
 `
 	filePath := filepath.Join(tmpDir, "preserve_frontmatter.md")
-	if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -927,7 +929,7 @@ More content
 		t.Fatal(err)
 	}
 
-	updated, _ := os.ReadFile(filePath)
+	updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 	updatedStr := string(updated)
 
 	// Frontmatter 应该完整保留
@@ -975,7 +977,7 @@ title: Test
 Content
 `
 	filePath := filepath.Join(tmpDir, "delete_with_frontmatter.md")
-	if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -988,7 +990,7 @@ Content
 		t.Error("DeleteTOC() should return true")
 	}
 
-	updated, _ := os.ReadFile(filePath)
+	updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
 	updatedStr := string(updated)
 
 	// Frontmatter 应该保留
