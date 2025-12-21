@@ -2,6 +2,8 @@
 
 <!--TOC-->
 
+## Table of Contents
+
 - [1. 规范标准](#1-规范标准) `:26+24`
   - [1.1 CommonMark](#11-commonmark) `:28+10`
   - [1.2 GFM (GitHub Flavored Markdown)](#12-gfm-github-flavored-markdown) `:38+12`

@@ -2,6 +2,8 @@
 
 <!--TOC-->
 
+## Table of Contents
+
 - [Features](#features) `:22+8`
 - [Requirements](#requirements) `:30+10`
 - [Usage](#usage) `:40+15`
