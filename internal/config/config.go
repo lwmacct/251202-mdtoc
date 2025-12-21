@@ -1,5 +1,7 @@
 package config
 
+import "errors"
+
 // Config 配置结构
 type Config struct {
 	MinLevel   int    `koanf:"min-level" yaml:"minLevel"`     // 最小标题层级 (1-6)
@@ -24,4 +26,18 @@ func DefaultConfig() *Config {
 		Anchor:     false,
 		TOCTitle:   "Table of Contents",
 	}
+}
+
+// Validate 校验配置有效性
+func (c *Config) Validate() error {
+	if c.MinLevel < 1 || c.MinLevel > 6 {
+		return errors.New("min-level 必须在 1-6 之间")
+	}
+	if c.MaxLevel < 1 || c.MaxLevel > 6 {
+		return errors.New("max-level 必须在 1-6 之间")
+	}
+	if c.MinLevel > c.MaxLevel {
+		return errors.New("min-level 不能大于 max-level")
+	}
+	return nil
 }

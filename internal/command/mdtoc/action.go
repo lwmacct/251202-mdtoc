@@ -19,20 +19,14 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	// 加载配置 (配置文件 → 环境变量 → CLI flags)
 	cfg := *cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.GetAppRawName())
 
+	// 校验配置
+	if err := cfg.Validate(); err != nil {
+		return err
+	}
+
 	// 操作模式 (不在配置文件中)
 	inPlace := cmd.Bool("in-place")
 	deleteMode := cmd.Bool("delete")
-
-	// 验证层级参数
-	if cfg.MinLevel < 1 || cfg.MinLevel > 6 {
-		return errors.New("min-level 必须在 1-6 之间")
-	}
-	if cfg.MaxLevel < 1 || cfg.MaxLevel > 6 {
-		return errors.New("max-level 必须在 1-6 之间")
-	}
-	if cfg.MinLevel > cfg.MaxLevel {
-		return errors.New("min-level 不能大于 max-level")
-	}
 
 	// 收集要处理的文件
 	files := collectFiles(cmd.Args().Slice())
