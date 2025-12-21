@@ -16,29 +16,21 @@ import (
 )
 
 func action(ctx context.Context, cmd *cli.Command) error {
+	// 加载配置 (配置文件 → 环境变量 → CLI flags)
+	cfg := *cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.GetAppRawName())
 
-	_ = cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.GetAppRawName())
-
-	// 解析命令行参数
-	minLevel := cmd.Int("min-level")
-	maxLevel := cmd.Int("max-level")
+	// 操作模式 (不在配置文件中)
 	inPlace := cmd.Bool("in-place")
 	deleteMode := cmd.Bool("delete")
-	ordered := cmd.Bool("ordered")
-	lineNumber := cmd.Bool("line-number")
-	showPath := cmd.Bool("path")
-	globalMode := cmd.Bool("global")
-	showAnchor := cmd.Bool("anchor")
-	tocTitle := cmd.String("toc-title")
 
 	// 验证层级参数
-	if minLevel < 1 || minLevel > 6 {
+	if cfg.MinLevel < 1 || cfg.MinLevel > 6 {
 		return errors.New("min-level 必须在 1-6 之间")
 	}
-	if maxLevel < 1 || maxLevel > 6 {
+	if cfg.MaxLevel < 1 || cfg.MaxLevel > 6 {
 		return errors.New("max-level 必须在 1-6 之间")
 	}
-	if minLevel > maxLevel {
+	if cfg.MinLevel > cfg.MaxLevel {
 		return errors.New("min-level 不能大于 max-level")
 	}
 
@@ -52,14 +44,14 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	// 创建基础选项
 	// 默认启用章节模式 (SectionTOC=true)，只有指定 --global 才使用全局模式
 	baseOpts := mdtoc.Options{
-		MinLevel:   minLevel,
-		MaxLevel:   maxLevel,
-		Ordered:    ordered,
-		LineNumber: lineNumber,
-		ShowPath:   showPath,
-		SectionTOC: !globalMode,
-		ShowAnchor: showAnchor, // 预览模式使用用户指定值
-		TOCTitle:   tocTitle,   // TOC 标题
+		MinLevel:   cfg.MinLevel,
+		MaxLevel:   cfg.MaxLevel,
+		Ordered:    cfg.Ordered,
+		LineNumber: cfg.LineNumber,
+		ShowPath:   cfg.ShowPath,
+		SectionTOC: !cfg.Global,
+		ShowAnchor: cfg.Anchor,
+		TOCTitle:   cfg.TOCTitle,
 	}
 
 	// 根据模式执行不同操作
