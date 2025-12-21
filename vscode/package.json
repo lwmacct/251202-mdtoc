@@ -1,0 +1,134 @@
+{
+  "name": "mc-mdtoc",
+  "displayName": "mc-mdtoc - Markdown TOC Generator",
+  "description": "Automatically generate and update Table of Contents for Markdown files",
+  "version": "0.1.0",
+  "publisher": "lwmacct",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lwmacct/251202-mc-mdtoc"
+  },
+  "bugs": {
+    "url": "https://github.com/lwmacct/251202-mc-mdtoc/issues"
+  },
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "toc",
+    "table of contents",
+    "formatter",
+    "outline"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mc-mdtoc.updateToc",
+        "title": "Update TOC",
+        "category": "mc-mdtoc",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "mc-mdtoc.deleteToc",
+        "title": "Delete TOC",
+        "category": "mc-mdtoc"
+      }
+    ],
+    "configuration": {
+      "title": "mc-mdtoc",
+      "properties": {
+        "mcMdtoc.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable mc-mdtoc formatting"
+        },
+        "mcMdtoc.formatOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically update TOC on save (when <!--TOC--> marker exists)"
+        },
+        "mcMdtoc.cliPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to mc-mdtoc executable. Leave empty to use system PATH"
+        },
+        "mcMdtoc.globalMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use global mode (single TOC for entire document). Default is section mode (TOC after each H1)"
+        },
+        "mcMdtoc.minLevel": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Minimum heading level to include in TOC"
+        },
+        "mcMdtoc.maxLevel": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Maximum heading level to include in TOC"
+        },
+        "mcMdtoc.ordered": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use ordered list (1. 2. 3.) instead of bullets"
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "mc-mdtoc.updateToc",
+          "when": "resourceLangId == markdown",
+          "group": "1_modification"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "mc-mdtoc.updateToc",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "mc-mdtoc.updateToc",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "resourceLangId == markdown"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "lint": "eslint src --ext ts",
+    "test": "npm run compile && node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "esbuild": "^0.27.2",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2"
+  }
+}
