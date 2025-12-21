@@ -8,11 +8,17 @@ import (
 	"os"
 	"strings"
 
+	"github.com/lwmacct/251202-mc-mdtoc/internal/config"
 	"github.com/lwmacct/251202-mc-mdtoc/internal/mdtoc"
+	"github.com/lwmacct/251207-go-pkg-cfgm/pkg/cfgm"
+	"github.com/lwmacct/251207-go-pkg-version/pkg/version"
 	"github.com/urfave/cli/v3"
 )
 
 func action(ctx context.Context, cmd *cli.Command) error {
+
+	_ = cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.GetAppRawName())
+
 	// 解析命令行参数
 	minLevel := cmd.Int("min-level")
 	maxLevel := cmd.Int("max-level")
