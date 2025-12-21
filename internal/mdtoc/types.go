@@ -50,3 +50,22 @@ type TOCMarker struct {
 
 // DefaultMarker 是默认的 TOC 标记字符串
 const DefaultMarker = "<!--TOC-->"
+
+// Document 表示分析后的文档结构
+type Document struct {
+	Frontmatter     FrontmatterInfo  // Frontmatter 信息
+	InsertionPoints []InsertionPoint // TOC 插入点列表
+}
+
+// FrontmatterInfo 存储 frontmatter 边界信息
+type FrontmatterInfo struct {
+	Exists  bool // 是否存在 frontmatter
+	EndLine int  // 结束行号 (0-based)，即 --- 所在行
+}
+
+// InsertionPoint 表示 TOC 插入位置
+type InsertionPoint struct {
+	InsertBeforeLine int       // 插入位置的行号 (0-based)，在此行前插入
+	SectionTitle     string    // 章节标题 (用于预览)，全局模式为空
+	Headers          []*Header // 该 TOC 包含的标题列表
+}

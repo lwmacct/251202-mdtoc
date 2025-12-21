@@ -786,9 +786,9 @@ Content here
 More content
 `,
 			// Line numbers reflect FINAL file (after TOC insertion)
-			// TOC block adds ~8 lines (空行+标记+空行+内容+空行+标记+空行)
-			// Section 1.1 at line 15, Section 1.2 at line 18
-			expectedLineNums: []string{`:15+`, `:18+`},
+			// TOC block adds ~9 lines (空行+标记+空行+内容+空行+标记+空行)
+			// Section 1.1 at line 14, Section 1.2 at line 17
+			expectedLineNums: []string{`:14+`, `:17+`},
 		},
 		{
 			name: "frontmatter with YAML comment should not affect line numbers",
@@ -805,8 +805,8 @@ First section content
 Second section content
 `,
 			// Line numbers reflect FINAL file (after TOC insertion)
-			// Section A at line 15, Section B at line 18
-			expectedLineNums: []string{`:15+`, `:18+`},
+			// Section A at line 14, Section B at line 17
+			expectedLineNums: []string{`:14+`, `:17+`},
 		},
 	}
 

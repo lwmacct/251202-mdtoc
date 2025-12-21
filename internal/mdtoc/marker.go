@@ -205,43 +205,51 @@ func (h *MarkerHandler) FindFirstHeading(content []byte) int {
 	return -1
 }
 
-// InsertTOCAfterFirstHeading 在第一个标题后插入 TOC
+// InsertTOCAfterFirstHeading 在第一个标题块末尾插入 TOC
+// 标题块 = 标题 + 其后的非空内容（徽标、描述等）
 func (h *MarkerHandler) InsertTOCAfterFirstHeading(content []byte, toc string) []byte {
 	firstHeading := h.FindFirstHeading(content)
 	if firstHeading == -1 {
 		// 没有标题，在文件开头插入
-		firstHeading = -1
+		lines := bytes.Split(content, []byte("\n"))
+		result := make([][]byte, 0, len(lines)+6)
+		result = append(result, []byte(h.marker))
+		result = append(result, []byte(""))
+		result = append(result, []byte(toc))
+		result = append(result, []byte(""))
+		result = append(result, []byte(h.marker))
+		result = append(result, []byte(""))
+		result = append(result, lines...)
+		return bytes.Join(result, []byte("\n"))
 	}
 
 	lines := bytes.Split(content, []byte("\n"))
 	result := make([][]byte, 0, len(lines)+6)
 
-	insertLine := firstHeading // 在标题行后插入
+	// 找到标题块的末尾（使用与 H1 相同的逻辑）
+	insertLine := h.FindH1BlockEnd(lines, firstHeading)
+
+	// 检查插入点后是否有空行需要跳过
+	skipNextEmpty := insertLine+1 < len(lines) && len(bytes.TrimSpace(lines[insertLine+1])) == 0
 
 	for i, line := range lines {
+		// 跳过插入点后的空行（TOC 块会自己添加）
+		if skipNextEmpty && i == insertLine+1 {
+			skipNextEmpty = false
+			continue
+		}
+
 		result = append(result, line)
 		if i == insertLine {
-			// 在标题后插入空行 + 标记 + TOC + 标记
+			// 在标题块末尾插入空行 + 标记 + TOC + 标记 + 空行
 			result = append(result, []byte(""))
 			result = append(result, []byte(h.marker))
 			result = append(result, []byte(""))
 			result = append(result, []byte(toc))
 			result = append(result, []byte(""))
 			result = append(result, []byte(h.marker))
+			result = append(result, []byte(""))
 		}
-	}
-
-	// 如果没有找到标题 (firstHeading == -1)，在开头插入
-	if firstHeading == -1 {
-		newResult := make([][]byte, 0, len(result)+6)
-		newResult = append(newResult, []byte(h.marker))
-		newResult = append(newResult, []byte(""))
-		newResult = append(newResult, []byte(toc))
-		newResult = append(newResult, []byte(""))
-		newResult = append(newResult, []byte(h.marker))
-		newResult = append(newResult, []byte(""))
-		newResult = append(newResult, result...)
-		result = newResult
 	}
 
 	return bytes.Join(result, []byte("\n"))
@@ -291,7 +299,42 @@ func (h *MarkerHandler) FindH1Lines(content []byte) []int {
 	return h1Lines
 }
 
-// InsertSectionTOCs 在每个 H1 后插入对应章节的 TOC
+// FindH1BlockEnd 查找 H1 块的结束位置 (0-based)
+// H1 块定义为：H1 标题 + 其后的非空内容（徽标、描述等）
+// 返回应该插入 TOC 的行号（在此行之后插入）
+// 逻辑：从 H1 行开始，跳过连续的非空行，找到第一个空行
+// 如果 H1 后直接是空行，返回 H1 行本身
+// 如果遇到下一个标题，返回标题前一行
+func (h *MarkerHandler) FindH1BlockEnd(lines [][]byte, h1Line int) int {
+	// 从 H1 后一行开始查找
+	for i := h1Line + 1; i < len(lines); i++ {
+		trimmed := bytes.TrimSpace(lines[i])
+
+		// 遇到空行，H1 块结束于前一行
+		if len(trimmed) == 0 {
+			return i - 1
+		}
+
+		// 遇到任何标题（H1-H6），H1 块结束于前一行
+		if len(trimmed) > 0 && trimmed[0] == '#' {
+			for j := 0; j < len(trimmed) && j < 6; j++ {
+				if trimmed[j] != '#' {
+					break
+				}
+				if j+1 < len(trimmed) && (trimmed[j+1] == ' ' || trimmed[j+1] == '\t') {
+					return i - 1
+				}
+			}
+		}
+	}
+
+	// 如果到文件末尾都没有空行，返回最后一行
+	return len(lines) - 1
+}
+
+// InsertSectionTOCs 在每个 H1 块末尾插入对应章节的 TOC
+// H1 块 = H1 标题 + 其后的徽标/描述等非空内容
+// TOC 会在 H1 块的第一个空行之后插入
 // sectionTOCs 是一个按 H1Line 排序的切片
 func (h *MarkerHandler) InsertSectionTOCs(content []byte, sectionTOCs []SectionTOC) []byte {
 	if len(sectionTOCs) == 0 {
@@ -301,25 +344,39 @@ func (h *MarkerHandler) InsertSectionTOCs(content []byte, sectionTOCs []SectionT
 	lines := bytes.Split(content, []byte("\n"))
 	result := make([][]byte, 0, len(lines)+len(sectionTOCs)*7)
 
-	// 创建 H1 行号到 TOC 的映射
-	h1ToTOC := make(map[int]string)
+	// 创建 H1 行号到 TOC 的映射，同时计算每个 H1 块的结束位置
+	type h1Info struct {
+		toc      string
+		blockEnd int // H1 块结束的行号
+	}
+	h1Infos := make(map[int]h1Info)
 	for _, st := range sectionTOCs {
 		if st.TOC != "" {
-			h1ToTOC[st.H1Line] = st.TOC
+			blockEnd := h.FindH1BlockEnd(lines, st.H1Line)
+			h1Infos[st.H1Line] = h1Info{
+				toc:      st.TOC,
+				blockEnd: blockEnd,
+			}
 		}
 	}
 
-	// 标记需要跳过的行（H1 后的空行，因为 TOC 块会自己添加空行）
+	// 创建插入点到 TOC 的映射（在 blockEnd 行之后插入）
+	insertPoints := make(map[int]string)
+	for _, info := range h1Infos {
+		insertPoints[info.blockEnd] = info.toc
+	}
+
+	// 标记需要跳过的行（TOC 插入点后的空行，因为 TOC 块会自己添加空行）
 	skipLines := make(map[int]bool)
-	for h1Line := range h1ToTOC {
-		// 检查 H1 后面的行是否为空行
-		if h1Line+1 < len(lines) && len(bytes.TrimSpace(lines[h1Line+1])) == 0 {
-			skipLines[h1Line+1] = true
+	for insertLine := range insertPoints {
+		// 检查插入点后面的行是否为空行
+		if insertLine+1 < len(lines) && len(bytes.TrimSpace(lines[insertLine+1])) == 0 {
+			skipLines[insertLine+1] = true
 		}
 	}
 
 	for i, line := range lines {
-		// 跳过 H1 后原有的空行（TOC 块会自己添加）
+		// 跳过插入点后原有的空行（TOC 块会自己添加）
 		if skipLines[i] {
 			continue
 		}
@@ -327,7 +384,7 @@ func (h *MarkerHandler) InsertSectionTOCs(content []byte, sectionTOCs []SectionT
 		result = append(result, line)
 
 		// 检查是否需要在此行后插入 TOC
-		if toc, ok := h1ToTOC[i]; ok {
+		if toc, ok := insertPoints[i]; ok {
 			result = append(result, []byte(""))       // 空行（开始标记前）
 			result = append(result, []byte(h.marker)) // <!--TOC-->
 			result = append(result, []byte(""))       // 空行（开始标记后）
@@ -461,25 +518,9 @@ func (h *MarkerHandler) CleanTOCBlocks(content []byte) ([]byte, []TOCBlockInfo) 
 			deleteLines[i] = true
 		}
 
-		// 检查块前是否有空行需要删除（开始标记前的空行）
-		if block.startLine > 0 && len(bytes.TrimSpace(lines[block.startLine-1])) == 0 {
-			deleteLines[block.startLine-1] = true
-		}
-
-		// 检查块后是否有空行需要删除（结束标记后的空行）
-		// 删除结束标记后连续的所有空行，只保留一个
-		afterEnd := block.endLine + 1
-		emptyCount := 0
-		for afterEnd < len(lines) && len(bytes.TrimSpace(lines[afterEnd])) == 0 {
-			emptyCount++
-			if emptyCount > 1 {
-				// 只保留一个空行，多余的删除
-				deleteLines[afterEnd] = true
-			}
-			afterEnd++
-		}
-		// 如果只有一个空行，也删除它（因为 InsertSectionTOCs 会添加）
-		if emptyCount == 1 {
+		// 删除 TOC 块后面紧跟的空行（因为插入时会添加）
+		// 这确保清理后的内容与原始无 TOC 的内容一致
+		if block.endLine+1 < len(lines) && len(bytes.TrimSpace(lines[block.endLine+1])) == 0 {
 			deleteLines[block.endLine+1] = true
 		}
 

@@ -1,6 +1,7 @@
 package mdtoc
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 )
@@ -304,6 +305,200 @@ No sub-headers here`,
 # Chapter 2
 
 No sub-headers here`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := NewMarkerHandler(DefaultMarker)
+			got := string(h.InsertSectionTOCs([]byte(tt.content), tt.sectionTOCs))
+
+			if got != tt.expected {
+				t.Errorf("InsertSectionTOCs() =\n%s\n\nwant:\n%s", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestMarkerHandler_FindH1BlockEnd(t *testing.T) {
+	tests := []struct {
+		name     string
+		content  string
+		h1Line   int
+		expected int
+	}{
+		{
+			name:     "H1 followed by empty line",
+			content:  "# Title\n\nContent",
+			h1Line:   0,
+			expected: 0, // 空行在第1行，所以 H1 块结束于第0行
+		},
+		{
+			name:     "H1 with badge on next line",
+			content:  "# Title\n[![Badge](url)](link)\n\nContent",
+			h1Line:   0,
+			expected: 1, // 徽标在第1行，空行在第2行，H1 块结束于第1行
+		},
+		{
+			name:     "H1 with description",
+			content:  "# Title\nShort description here.\n\n## Section",
+			h1Line:   0,
+			expected: 1, // 描述在第1行，空行在第2行，H1 块结束于第1行
+		},
+		{
+			name:     "H1 with badge and description",
+			content:  "# Title\n[![Badge](url)](link)\nShort description.\n\n## Section",
+			h1Line:   0,
+			expected: 2, // 徽标第1行、描述第2行、空行第3行，H1 块结束于第2行
+		},
+		{
+			name:     "H1 followed directly by H2 (no empty line)",
+			content:  "# Title\n## Section",
+			h1Line:   0,
+			expected: 0, // H2 在第1行，H1 块结束于第0行（H1 本身）
+		},
+		{
+			name:     "H1 at end of file with content",
+			content:  "# Title\nSome content",
+			h1Line:   0,
+			expected: 1, // 文件末尾没有空行，返回最后一行
+		},
+		{
+			name:     "H1 at end of file alone",
+			content:  "# Title",
+			h1Line:   0,
+			expected: 0, // 只有 H1，返回 H1 行
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := NewMarkerHandler(DefaultMarker)
+			lines := bytes.Split([]byte(tt.content), []byte("\n"))
+			got := h.FindH1BlockEnd(lines, tt.h1Line)
+
+			if got != tt.expected {
+				t.Errorf("FindH1BlockEnd() = %d, want %d\nContent:\n%s", got, tt.expected, tt.content)
+			}
+		})
+	}
+}
+
+func TestMarkerHandler_InsertSectionTOCs_WithBadgeAndDescription(t *testing.T) {
+	tests := []struct {
+		name        string
+		content     string
+		sectionTOCs []SectionTOC
+		expected    string
+	}{
+		{
+			name: "H1 with badge - TOC after badge",
+			content: `# My Project
+[![Build](https://img.shields.io/badge/build-passing-green)](https://ci.example.com)
+
+## Installation
+
+Content here`,
+			sectionTOCs: []SectionTOC{
+				{H1Line: 0, TOC: "- [Installation](#installation)"},
+			},
+			expected: `# My Project
+[![Build](https://img.shields.io/badge/build-passing-green)](https://ci.example.com)
+
+<!--TOC-->
+
+- [Installation](#installation)
+
+<!--TOC-->
+
+## Installation
+
+Content here`,
+		},
+		{
+			name: "H1 with description - TOC after description",
+			content: `# My Project
+A brief description of this project.
+
+## Getting Started
+
+Content here`,
+			sectionTOCs: []SectionTOC{
+				{H1Line: 0, TOC: "- [Getting Started](#getting-started)"},
+			},
+			expected: `# My Project
+A brief description of this project.
+
+<!--TOC-->
+
+- [Getting Started](#getting-started)
+
+<!--TOC-->
+
+## Getting Started
+
+Content here`,
+		},
+		{
+			name: "H1 with badge and description - TOC after both",
+			content: `# My Project
+[![Badge](url)](link)
+Short description here.
+
+## Features
+
+Content`,
+			sectionTOCs: []SectionTOC{
+				{H1Line: 0, TOC: "- [Features](#features)"},
+			},
+			expected: `# My Project
+[![Badge](url)](link)
+Short description here.
+
+<!--TOC-->
+
+- [Features](#features)
+
+<!--TOC-->
+
+## Features
+
+Content`,
+		},
+		{
+			name: "multiple H1s with different block sizes",
+			content: `# Chapter 1
+Badge and description.
+
+## Section 1.1
+
+# Chapter 2
+
+## Section 2.1`,
+			sectionTOCs: []SectionTOC{
+				{H1Line: 0, TOC: "- [Section 1.1](#section-11)"},
+				{H1Line: 5, TOC: "- [Section 2.1](#section-21)"},
+			},
+			expected: `# Chapter 1
+Badge and description.
+
+<!--TOC-->
+
+- [Section 1.1](#section-11)
+
+<!--TOC-->
+
+## Section 1.1
+
+# Chapter 2
+
+<!--TOC-->
+
+- [Section 2.1](#section-21)
+
+<!--TOC-->
+
+## Section 2.1`,
 		},
 	}
 
