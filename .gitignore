@@ -49,4 +49,4 @@ __pycache__/
 # **/.claude/*
 
 # VS Code extensions
-.vsix
+# **/*.vsix
