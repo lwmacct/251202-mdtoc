@@ -61,6 +61,11 @@ fd -e md | mc-mdtoc`,
 			Aliases: []string{"a"},
 			Usage:   "预览时显示锚点链接 [标题](#anchor)",
 		},
+		&cli.StringFlag{
+			Name:    "toc-title",
+			Aliases: []string{"T"},
+			Usage:   "TOC 标题 (如 '文档目录'，将在 TOC 内生成 ## 文档目录)",
+		},
 	},
 	Action: action,
 }

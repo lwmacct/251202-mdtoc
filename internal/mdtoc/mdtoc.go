@@ -150,6 +150,15 @@ func adjustHeader(h *Header, offset int) *Header {
 	}
 }
 
+// prependTOCTitle 在 TOC 内容前添加标题
+// 如果 title 为空，返回原内容
+func prependTOCTitle(toc, title string) string {
+	if title == "" || toc == "" {
+		return toc
+	}
+	return "## " + title + "\n\n" + toc
+}
+
 // GenerateSectionTOCsPreview 生成章节模式的 TOC 预览 (用于 stdout 输出)
 func (t *TOC) GenerateSectionTOCsPreview(content []byte) (string, error) {
 	// 解析所有标题
@@ -201,6 +210,13 @@ func (t *TOC) UpdateFile(filename string) error {
 			return err
 		}
 
+		// 如果设置了 TOCTitle，为每个章节的 TOC 添加标题
+		if t.options.TOCTitle != "" {
+			for i := range sectionTOCs {
+				sectionTOCs[i].TOC = prependTOCTitle(sectionTOCs[i].TOC, t.options.TOCTitle)
+			}
+		}
+
 		// 在干净内容上插入新的 TOC
 		newContent = t.marker.InsertSectionTOCs(cleanContent, sectionTOCs)
 	} else {
@@ -209,6 +225,9 @@ func (t *TOC) UpdateFile(filename string) error {
 		if err != nil {
 			return err
 		}
+
+		// 如果设置了 TOCTitle，在 TOC 前添加标题
+		toc = prependTOCTitle(toc, t.options.TOCTitle)
 
 		markers := t.marker.FindMarkers(content)
 		if markers.Found {

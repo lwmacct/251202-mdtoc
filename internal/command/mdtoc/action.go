@@ -23,6 +23,7 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	showPath := cmd.Bool("path")
 	globalMode := cmd.Bool("global")
 	showAnchor := cmd.Bool("anchor")
+	tocTitle := cmd.String("toc-title")
 
 	// 验证层级参数
 	if minLevel < 1 || minLevel > 6 {
@@ -52,6 +53,7 @@ func action(ctx context.Context, cmd *cli.Command) error {
 		ShowPath:   showPath,
 		SectionTOC: !globalMode,
 		ShowAnchor: showAnchor, // 预览模式使用用户指定值
+		TOCTitle:   tocTitle,   // TOC 标题
 	}
 
 	// 根据模式执行不同操作

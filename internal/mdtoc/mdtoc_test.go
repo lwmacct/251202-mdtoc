@@ -1011,3 +1011,131 @@ Content
 		t.Error("Section headers should be preserved")
 	}
 }
+
+// ==================== TOC Title Tests ====================
+
+// TestTOC_UpdateFile_WithTOCTitle 测试带 TOC 标题的文件更新
+func TestTOC_UpdateFile_WithTOCTitle(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	t.Run("global mode with TOC title", func(t *testing.T) {
+		content := `# Project
+
+<!--TOC-->
+<!--TOC-->
+
+## Installation
+
+## Usage
+`
+		filePath := filepath.Join(tmpDir, "global_toc_title.md")
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
+			t.Fatal(err)
+		}
+
+		toc := mdtoc.New(mdtoc.Options{
+			MinLevel:   2,
+			MaxLevel:   3,
+			SectionTOC: false, // 全局模式
+			ShowAnchor: true,
+			TOCTitle:   "文档目录",
+		})
+		if err := toc.UpdateFile(filePath); err != nil {
+			t.Fatal(err)
+		}
+
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
+		updatedStr := string(updated)
+
+		// 验证 TOC 标题存在
+		if !strings.Contains(updatedStr, "## 文档目录") {
+			t.Errorf("Updated file should contain TOC title '## 文档目录', got:\n%s", updatedStr)
+		}
+
+		// 验证 TOC 内容存在
+		if !strings.Contains(updatedStr, "[Installation]") {
+			t.Error("Updated file should contain Installation link")
+		}
+		if !strings.Contains(updatedStr, "[Usage]") {
+			t.Error("Updated file should contain Usage link")
+		}
+	})
+
+	t.Run("section mode with TOC title", func(t *testing.T) {
+		content := `# Chapter 1
+
+## Section 1.1
+
+## Section 1.2
+
+# Chapter 2
+
+## Section 2.1
+`
+		filePath := filepath.Join(tmpDir, "section_toc_title.md")
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
+			t.Fatal(err)
+		}
+
+		toc := mdtoc.New(mdtoc.Options{
+			MinLevel:   2,
+			MaxLevel:   3,
+			SectionTOC: true,
+			ShowAnchor: true,
+			TOCTitle:   "目录",
+		})
+		if err := toc.UpdateFile(filePath); err != nil {
+			t.Fatal(err)
+		}
+
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
+		updatedStr := string(updated)
+
+		// 章节模式下每个章节都应该有 TOC 标题
+		if strings.Count(updatedStr, "## 目录") < 2 {
+			t.Errorf("Section mode should have multiple TOC titles, got:\n%s", updatedStr)
+		}
+
+		// 验证 TOC 内容存在
+		if !strings.Contains(updatedStr, "[Section 1.1]") {
+			t.Error("Updated file should contain Section 1.1 link")
+		}
+		if !strings.Contains(updatedStr, "[Section 2.1]") {
+			t.Error("Updated file should contain Section 2.1 link")
+		}
+	})
+
+	t.Run("empty TOC title should not add title", func(t *testing.T) {
+		content := `# Project
+
+<!--TOC-->
+<!--TOC-->
+
+## Section 1
+`
+		filePath := filepath.Join(tmpDir, "empty_toc_title.md")
+		if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
+			t.Fatal(err)
+		}
+
+		toc := mdtoc.New(mdtoc.Options{
+			MinLevel:   2,
+			MaxLevel:   3,
+			SectionTOC: false,
+			ShowAnchor: true,
+			TOCTitle:   "", // 空标题
+		})
+		if err := toc.UpdateFile(filePath); err != nil {
+			t.Fatal(err)
+		}
+
+		updated, _ := os.ReadFile(filePath) //nolint:gosec // G304: test file path
+		updatedStr := string(updated)
+
+		// 不应该有额外的 ## 标题（除了 Section 1）
+		// 只检查 TOC 区域内不应该有 ## 标题
+		if strings.Contains(updatedStr, "## 目录") || strings.Contains(updatedStr, "## 文档目录") {
+			t.Error("Empty TOC title should not add any title")
+		}
+	})
+}

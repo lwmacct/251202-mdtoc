@@ -20,6 +20,7 @@ type Options struct {
 	FilePath   string // 当前处理的文件路径
 	SectionTOC bool   // 章节模式：每个 H1 后生成独立的子目录
 	ShowAnchor bool   // 显示锚点链接 [标题](#anchor)，预览默认 false，写入强制 true
+	TOCTitle   string // TOC 标题文本 (如 "文档目录")，非空时在 TOC 内容前添加 ## 标题
 }
 
 // Section 表示一个章节 (H1 及其子标题)
