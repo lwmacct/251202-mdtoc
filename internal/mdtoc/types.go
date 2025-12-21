@@ -35,8 +35,9 @@ func DefaultOptions() Options {
 		MinLevel:   1,
 		MaxLevel:   3,
 		Ordered:    false,
-		SectionTOC: true, // 默认启用章节模式：在每个 H1 下生成独立子目录
-		ShowAnchor: true, // 默认生成链接格式 [标题](#anchor)
+		SectionTOC: true,                // 默认启用章节模式：在每个 H1 下生成独立子目录
+		ShowAnchor: true,                // 默认生成链接格式 [标题](#anchor)
+		TOCTitle:   "Table of Contents", // 默认 TOC 标题
 	}
 }
 
