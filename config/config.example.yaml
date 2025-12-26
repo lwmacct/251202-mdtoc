@@ -7,3 +7,4 @@ path: false
 global: false
 anchor: false
 toc-title: "Table of Contents"
+force: false

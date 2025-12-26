@@ -31,6 +31,11 @@ fd -e md | mc-mdtoc`,
 			Usage:   "原地更新文件 (在 <!--TOC--> 标记处插入)",
 		},
 		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "强制生成 TOC，即使文件中没有 <!--TOC--> 标记",
+		},
+		&cli.BoolFlag{
 			Name:    "delete",
 			Aliases: []string{"d"},
 			Usage:   "删除文件中的 TOC 标记和内容",

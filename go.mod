@@ -3,8 +3,8 @@ module github.com/lwmacct/251202-mc-mdtoc
 go 1.25.4
 
 require (
-	github.com/lwmacct/251207-go-pkg-cfgm v0.2.1
-	github.com/lwmacct/251207-go-pkg-version v0.0.2
+	github.com/lwmacct/251207-go-pkg-cfgm v0.2.2
+	github.com/lwmacct/251207-go-pkg-version v0.0.4
 	github.com/urfave/cli/v3 v3.6.1
 	github.com/yuin/goldmark v1.7.13
 )
@@ -16,7 +16,7 @@ require (
 	github.com/knadh/koanf/maps v0.1.2 // indirect
 	github.com/knadh/koanf/parsers/json v1.0.0 // indirect
 	github.com/knadh/koanf/parsers/yaml v1.1.0 // indirect
-	github.com/knadh/koanf/providers/file v1.2.0 // indirect
+	github.com/knadh/koanf/providers/file v1.2.1 // indirect
 	github.com/knadh/koanf/providers/rawbytes v1.0.0 // indirect
 	github.com/knadh/koanf/providers/structs v1.0.0 // indirect
 	github.com/knadh/koanf/v2 v2.3.0 // indirect

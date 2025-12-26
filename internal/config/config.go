@@ -12,6 +12,7 @@ type Config struct {
 	Global     bool   `koanf:"global" yaml:"global"`          // 全局模式
 	Anchor     bool   `koanf:"anchor" yaml:"anchor"`          // 显示锚点链接
 	TOCTitle   string `koanf:"toc-title" yaml:"tocTitle"`     // TOC 标题
+	Force      bool   `koanf:"force" yaml:"force"`            // 强制生成 TOC（忽略标记检查）
 }
 
 // DefaultConfig 返回默认配置

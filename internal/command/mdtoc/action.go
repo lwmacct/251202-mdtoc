@@ -17,7 +17,7 @@ import (
 
 func action(ctx context.Context, cmd *cli.Command) error {
 	// 加载配置 (配置文件 → 环境变量 → CLI flags)
-	cfg := *cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.GetAppRawName())
+	cfg := *cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.AppRawName)
 
 	// 校验配置
 	if err := cfg.Validate(); err != nil {
@@ -27,6 +27,7 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	// 操作模式 (不在配置文件中)
 	inPlace := cmd.Bool("in-place")
 	deleteMode := cmd.Bool("delete")
+	force := cmd.Bool("force")
 
 	// 收集要处理的文件
 	files := collectFiles(cmd.Args().Slice())
@@ -56,7 +57,7 @@ func action(ctx context.Context, cmd *cli.Command) error {
 		// inPlace 模式强制启用 ShowAnchor（写入文件必须有链接）
 		writeOpts := baseOpts
 		writeOpts.ShowAnchor = true
-		return processInPlace(mdtoc.New(writeOpts), files)
+		return processInPlace(mdtoc.New(writeOpts), files, force)
 	default:
 		return processStdout(baseOpts, files)
 	}
@@ -128,8 +129,8 @@ func processDelete(toc *mdtoc.TOC, files []string) error {
 }
 
 // processInPlace 原地更新模式
-// 如果文件没有 TOC 标记，会自动在第一个标题后插入
-func processInPlace(toc *mdtoc.TOC, files []string) error {
+// 默认只有文件包含 <!--TOC--> 标记时才更新，使用 force=true 可强制生成
+func processInPlace(toc *mdtoc.TOC, files []string, force bool) error {
 	var errors []string
 
 	for _, file := range files {
@@ -139,6 +140,12 @@ func processInPlace(toc *mdtoc.TOC, files []string) error {
 		}
 
 		hasMarker, _ := toc.HasMarker(file)
+
+		// 检查是否需要标记
+		if !hasMarker && !force {
+			_, _ = os.Stdout.WriteString(file + ": 跳过 (无 <!--TOC--> 标记，使用 --force 强制生成)\n")
+			continue
+		}
 
 		if err := toc.UpdateFile(file); err != nil {
 			errors = append(errors, fmt.Sprintf("%s: %v", file, err))
