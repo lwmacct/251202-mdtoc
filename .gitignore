@@ -1,52 +1,45 @@
 # 本地环境
 **/.DS_Store
-**/.local/*
-**/.venv/*
-**/.conda/*
-**/.task/remote/*
+**/.local/
+**/.venv/
+**/.conda/
+**/.task/remote/
 
-# 构建输出
-**/dist/**
-**/build/**
-
-# 秘密文件
-**/.env
-**/.secret/*
-**/config/config.yaml
+# 生成文件
+**/gen/
 
 # node_modules
-**/node_modules/**
+**/node_modules/
 **/tsconfig.tsbuildinfo
 
-# 临时目录
-**/tmp/**
-**/log/**
-**/logs/**
-**/temp/**
-**/cache/**
+# 构建输出
+
+**/bin/
+**/dist/
+**/build/
+**/*.vsix
 
 # 临时文件
 **/*.bak
 **/*.log
 **/*.tmp
+**/*.out
 **/*.temp
 **/*.cache
 
-# python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.pyw
-*.pyz
-*.pywz
-*.pyzw
+# 临时目录
+tmp/**
+log/**
+logs/**
+temp/**
+cache/**
 
-# build binaries
-/bin/
+# Local env files
+.env
+.env.*
+!.env.example
+config/config.yaml
 
-# ai tools
-# **/.claude/*
-
-# VS Code extensions
-**/*.vsix
+# IDEs 和 编辑器
+.claude/
+.playwright-mcp/

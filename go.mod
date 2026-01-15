@@ -3,8 +3,8 @@ module github.com/lwmacct/251202-mc-mdtoc
 go 1.25.4
 
 require (
-	github.com/lwmacct/251207-go-pkg-cfgm v0.2.2
-	github.com/lwmacct/251207-go-pkg-version v0.0.4
+	github.com/lwmacct/251207-go-pkg-cfgm v0.2.260109
+	github.com/lwmacct/251207-go-pkg-version v0.1.260109
 	github.com/urfave/cli/v3 v3.6.1
 	github.com/yuin/goldmark v1.7.13
 )
