@@ -1,4 +1,4 @@
-package mdtoc
+package root
 
 import (
 	"bufio"
@@ -8,16 +8,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lwmacct/251202-mc-mdtoc/internal/config"
 	"github.com/lwmacct/251202-mc-mdtoc/internal/mdtoc"
 	"github.com/lwmacct/251207-go-pkg-cfgm/pkg/cfgm"
-	"github.com/lwmacct/251207-go-pkg-version/pkg/version"
 	"github.com/urfave/cli/v3"
 )
 
 func action(ctx context.Context, cmd *cli.Command) error {
 	// 加载配置 (配置文件 → 环境变量 → CLI flags)
-	cfg := *cfgm.MustLoadCmd(cmd, config.DefaultConfig(), version.AppRawName)
+	cfg := *cfgm.MustLoad(ctx, defaults, cfgm.Command(cmd, cfgm.IgnoreFlags("in-place", "delete")))
 
 	// 校验配置
 	if err := cfg.Validate(); err != nil {
@@ -27,10 +25,13 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	// 操作模式 (不在配置文件中)
 	inPlace := cmd.Bool("in-place")
 	deleteMode := cmd.Bool("delete")
-	force := cmd.Bool("force")
+	force := cfg.Force
 
 	// 收集要处理的文件
-	files := collectFiles(cmd.Args().Slice())
+	files, err := collectFiles(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
 	if len(files) == 0 {
 		// 无文件时显示帮助
 		return cli.ShowSubcommandHelp(cmd)
@@ -65,7 +66,7 @@ func action(ctx context.Context, cmd *cli.Command) error {
 
 // collectFiles 收集要处理的文件列表
 // 优先从命令行参数获取，如果没有则尝试从 stdin 读取
-func collectFiles(args []string) []string {
+func collectFiles(args []string) ([]string, error) {
 	var files []string
 
 	// 从命令行参数收集
@@ -85,9 +86,12 @@ func collectFiles(args []string) []string {
 				files = append(files, line)
 			}
 		}
+		if err := scanner.Err(); err != nil {
+			return nil, fmt.Errorf("读取 stdin: %w", err)
+		}
 	}
 
-	return files
+	return files, nil
 }
 
 // isTerminal 检查文件是否是终端

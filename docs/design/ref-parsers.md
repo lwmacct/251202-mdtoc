@@ -4,24 +4,24 @@
 
 ## Table of Contents
 
-- [1. 规范标准](#1-规范标准) `:26+24`
-  - [1.1 CommonMark](#11-commonmark) `:28+10`
-  - [1.2 GFM (GitHub Flavored Markdown)](#12-gfm-github-flavored-markdown) `:38+12`
-- [2. 主流解析器对比](#2-主流解析器对比) `:50+38`
-  - [2.1 按语言分类](#21-按语言分类) `:52+18`
-  - [2.2 框架使用情况](#22-框架使用情况) `:70+18`
-- [3. Go 生态解析器详细对比](#3-go-生态解析器详细对比) `:88+45`
-  - [3.1 goldmark vs blackfriday](#31-goldmark-vs-blackfriday) `:90+11`
-  - [3.2 goldmark 性能](#32-goldmark-性能) `:101+10`
-  - [3.3 goldmark 扩展](#33-goldmark-扩展) `:111+22`
-- [4. 我们的选择](#4-我们的选择) `:133+48`
-  - [4.1 决策：goldmark](#41-决策goldmark) `:135+11`
-  - [4.2 GitHub Anchor Link 规则](#42-github-anchor-link-规则) `:146+27`
-  - [4.3 参考实现](#43-参考实现) `:173+8`
-- [5. 未来扩展](#5-未来扩展) `:181+27`
-  - [5.1 VitePress 支持 (P2)](#51-vitepress-支持-p2) `:183+11`
-  - [5.2 Hugo 支持 (P2)](#52-hugo-支持-p2) `:194+14`
-- [6. 参考资料](#6-参考资料) `:208+7`
+- [1. 规范标准](#1-规范标准) `:28+24`
+  - [1.1 CommonMark](#11-commonmark) `:30+10`
+  - [1.2 GFM (GitHub Flavored Markdown)](#12-gfm-github-flavored-markdown) `:40+12`
+- [2. 主流解析器对比](#2-主流解析器对比) `:52+38`
+  - [2.1 按语言分类](#21-按语言分类) `:54+18`
+  - [2.2 框架使用情况](#22-框架使用情况) `:72+18`
+- [3. Go 生态解析器详细对比](#3-go-生态解析器详细对比) `:90+45`
+  - [3.1 goldmark vs blackfriday](#31-goldmark-vs-blackfriday) `:92+11`
+  - [3.2 goldmark 性能](#32-goldmark-性能) `:103+10`
+  - [3.3 goldmark 扩展](#33-goldmark-扩展) `:113+22`
+- [4. 我们的选择](#4-我们的选择) `:135+48`
+  - [4.1 决策：goldmark](#41-决策goldmark) `:137+11`
+  - [4.2 GitHub Anchor Link 规则](#42-github-anchor-link-规则) `:148+27`
+  - [4.3 参考实现](#43-参考实现) `:175+8`
+- [5. 未来扩展](#5-未来扩展) `:183+27`
+  - [5.1 VitePress 支持 (P2)](#51-vitepress-支持-p2) `:185+11`
+  - [5.2 Hugo 支持 (P2)](#52-hugo-支持-p2) `:196+14`
+- [6. 参考资料](#6-参考资料) `:210+7`
 
 <!--TOC-->
 

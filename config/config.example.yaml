@@ -1,10 +1,11 @@
-# 配置示例文件, 复制此文件为 config.yaml 并根据需要修改
-min-level: 1
-max-level: 3
-ordered: false
-line-number: true
-path: false
-global: false
-anchor: false
-toc-title: "Table of Contents"
-force: false
+# 默认配置示例文件, 此文件由单元测试生成, 请勿直接修改
+# 复制此文件为 config.yaml 并根据需要修改
+min-level: 1 # 最小标题层级 (1-6)
+max-level: 3 # 最大标题层级 (1-6)
+ordered: false # 使用有序列表 (1. 2. 3.)
+line-number: true # 显示行号范围 (:start:end)
+path: false # 显示文件路径 (path:start:end)
+global: false # 全局模式: 生成完整文档的单一目录 (默认为章节模式)
+anchor: false # 预览时显示锚点链接 [标题](#anchor)
+toc-title: "Table of Contents" # TOC 标题 (如 '文档目录'，将在 TOC 内生成 ## 文档目录，设为空则不生成标题)
+force: false # 强制生成 TOC，即使文件中没有 <!--TOC--> 标记
