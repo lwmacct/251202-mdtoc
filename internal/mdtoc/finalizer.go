@@ -1,9 +1,6 @@
 package mdtoc
 
-import (
-	"fmt"
-	"regexp"
-)
+import "regexp"
 
 // Finalizer 替换占位符为实际行号
 type Finalizer struct {
@@ -48,11 +45,7 @@ func (f *Finalizer) Finalize(content []byte) ([]byte, error) {
 	result := placeholderPattern.ReplaceAllFunc(content, func(match []byte) []byte {
 		anchor := extractAnchor(match)
 		if info, ok := anchorToLine[anchor]; ok {
-			count := info.EndLine - info.Line + 1
-			if f.options.ShowPath && f.options.FilePath != "" {
-				return fmt.Appendf(nil, "%s:%d+%d", f.options.FilePath, info.Line, count)
-			}
-			return fmt.Appendf(nil, ":%d+%d", info.Line, count)
+			return []byte(formatLineRange(f.options, newLineRange(info.Line, info.EndLine)))
 		}
 		// 未找到锚点，保留占位符（不应该发生）
 		return match

@@ -56,7 +56,7 @@ mdtoc -i README.md
 
 # 显示文件路径 + 行号范围
 mdtoc -p README.md
-# 输出: - [标题](#标题) `README.md:1+10`
+# 输出: - [标题](#标题) `README.md:1+10=11`
 
 # 使用有序列表 + 指定层级
 mdtoc -o -m 2 -M 4 README.md
@@ -78,8 +78,8 @@ fd -e md | mdtoc -i
 | `--force`       | `-f`   | 强制生成 TOC，即使没有 `<!--TOC-->` 标记 |
 | `--delete`      | `-d`   | 删除文件中的 TOC                         |
 | `--ordered`     | `-o`   | 使用有序列表                             |
-| `--line-number` | `-L`   | 显示行号范围 `:start+count` (默认启用)   |
-| `--path`        | `-p`   | 显示文件路径 `path:start+count`          |
+| `--line-number` | `-L`   | 显示行号范围 `:start+count=end` (默认启用) |
+| `--path`        | `-p`   | 显示文件路径 `path:start+count=end`        |
 | `--global`      | `-g`   | 全局模式 (默认为章节模式)                |
 | `--anchor`      | `-a`   | 预览时显示锚点链接                       |
 

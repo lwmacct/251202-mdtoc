@@ -31,8 +31,8 @@ Options:
   -f, --force        强制生成 TOC，即使文件中没有 <!--TOC--> 标记
   -d, --delete       删除文件中的 TOC 标记和内容
   -o, --ordered      有序列表
-  -L, --line-number  显示行号范围 :start+count (默认启用)
-  -p, --path         显示文件路径 path:start+count
+  -L, --line-number  显示行号范围 :start+count=end (默认启用)
+  -p, --path         显示文件路径 path:start+count=end
   -g, --global       全局模式 (默认为章节模式)
   -a, --anchor       预览时显示锚点链接 [标题](#anchor)
 ```
@@ -48,8 +48,8 @@ Options:
 | 原地更新    | `-i` 直接修改文件                 | ✅ 已完成 |
 | TOC 删除    | `-d` 删除文件中的 TOC             | ✅ 已完成 |
 | 有序列表    | `-o` 生成 `1. 2. 3.` 格式         | ✅ 已完成 |
-| 行号范围    | `-L` 显示 `:start+count`          | ✅ 已完成 |
-| 文件路径    | `-p` 显示 `path:start+count`      | ✅ 已完成 |
+| 行号范围    | `-L` 显示 `:start+count=end`      | ✅ 已完成 |
+| 文件路径    | `-p` 显示 `path:start+count=end`  | ✅ 已完成 |
 | 锚点显示    | `-a` 预览时显示 `[标题](#anchor)` | ✅ 已完成 |
 | 章节模式    | 默认：每个 H1 后生成独立子目录    | ✅ 已完成 |
 | H2 检查     | 章节需至少包含一个 H2 才生成 TOC  | ✅ 已完成 |
@@ -64,15 +64,15 @@ Options:
 ```shell
 # 默认输出 (预览模式不显示锚点)
 mdtoc README.md
-# - [标题] `:1+10`
+# - [标题] `:1+10=11`
 
 # 显示锚点链接
 mdtoc -a README.md
-# - [标题](#标题) `:1+10`
+# - [标题](#标题) `:1+10=11`
 
 # 带文件路径
 mdtoc -a -p README.md
-# - [标题](#标题) `README.md:1+10`
+# - [标题](#标题) `README.md:1+10=11`
 
 # 禁用行号
 mdtoc -a -L=false README.md
@@ -80,7 +80,7 @@ mdtoc -a -L=false README.md
 
 # 写入文件时自动启用锚点链接
 mdtoc -i README.md
-# 文件内容: - [标题](#标题) `:1+10`
+# 文件内容: - [标题](#标题) `:1+10=11`
 ```
 
 ## TOC 标记规范

@@ -405,8 +405,8 @@ Old TOC content
 
 <!--TOC-->
 
-- [Section 1](#section-1) ` + "`:10+6`" + `
-- [Section 2](#section-2) ` + "`:16+5`" + `
+- [Section 1](#section-1) ` + "`:10+6=16`" + `
+- [Section 2](#section-2) ` + "`:16+5=21`" + `
 
 <!--TOC-->
 
@@ -670,7 +670,7 @@ func TestTOC_LineNumbers_WithFrontmatter(t *testing.T) {
 	tests := []struct {
 		name             string
 		content          string
-		expectedLineNums []string // 期望的行号格式 (如 `:5+7`, `:7+3`)
+		expectedLineNums []string // 期望的行号格式 (如 `:5+7=12`, `:7+3=10`)
 	}{
 		{
 			name: "basic frontmatter",
@@ -968,7 +968,7 @@ title: Test
 
 <!--TOC-->
 
-- [Section 1](#section-1) ` + "`:7+4`" + `
+- [Section 1](#section-1) ` + "`:7+4=11`" + `
 
 <!--TOC-->
 

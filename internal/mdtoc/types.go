@@ -15,8 +15,8 @@ type Options struct {
 	MinLevel   int    // 最小标题层级 (默认 1)
 	MaxLevel   int    // 最大标题层级 (默认 3)
 	Ordered    bool   // 使用有序列表
-	LineNumber bool   // 显示行号范围 (:start:end)
-	ShowPath   bool   // 显示文件路径 (path:start:end)
+	LineNumber bool   // 显示行号范围 (:start+count=end)
+	ShowPath   bool   // 显示文件路径 (path:start+count=end)
 	FilePath   string // 当前处理的文件路径
 	SectionTOC bool   // 章节模式：每个 H1 后生成独立的子目录
 	ShowAnchor bool   // 显示锚点链接 [标题](#anchor)，预览默认 false，写入强制 true

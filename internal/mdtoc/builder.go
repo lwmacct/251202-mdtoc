@@ -2,8 +2,6 @@ package mdtoc
 
 import (
 	"bytes"
-	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -136,52 +134,9 @@ func (b *Builder) buildTOCEntries(headers []*Header) []string {
 		return nil
 	}
 
-	// 找到最小层级作为缩进基准
-	minLevel := 6
-	for _, h := range headers {
-		if h.Level < minLevel {
-			minLevel = h.Level
-		}
-	}
-
-	entries := make([]string, 0, len(headers))
-	orderedCounters := make(map[int]int)
-
-	for _, h := range headers {
-		// 计算缩进
-		indent := (h.Level - minLevel) * 2
-		indentStr := strings.Repeat(" ", indent)
-
-		// 列表标记
-		var marker string
-		if b.options.Ordered {
-			orderedCounters[h.Level]++
-			for level := h.Level + 1; level <= 6; level++ {
-				orderedCounters[level] = 0
-			}
-			marker = strconv.Itoa(orderedCounters[h.Level]) + "."
-		} else {
-			marker = "-"
-		}
-
-		// 链接格式
-		var link string
-		if b.options.ShowAnchor {
-			link = "[" + h.Text + "](#" + h.AnchorLink + ")"
-		} else {
-			link = "[" + h.Text + "]"
-		}
-
-		// 行号占位符
-		if b.options.LineNumber {
-			link += " `{{LINE:" + h.AnchorLink + "}}`"
-		}
-
-		entry := indentStr + marker + " " + link
-		entries = append(entries, entry)
-	}
-
-	return entries
+	return renderTOCEntries(headers, b.options, minHeaderLevel(headers), func(h *Header) string {
+		return "{{LINE:" + h.AnchorLink + "}}"
+	})
 }
 
 // buildPreviewEntries 构建预览 TOC 条目（带实际行号，不是占位符）
@@ -190,52 +145,7 @@ func (b *Builder) buildPreviewEntries(headers []*Header) []string {
 		return nil
 	}
 
-	// 找到最小层级作为缩进基准
-	minLevel := 6
-	for _, h := range headers {
-		if h.Level < minLevel {
-			minLevel = h.Level
-		}
-	}
-
-	entries := make([]string, 0, len(headers))
-	orderedCounters := make(map[int]int)
-
-	for _, h := range headers {
-		indent := (h.Level - minLevel) * 2
-		indentStr := strings.Repeat(" ", indent)
-
-		var marker string
-		if b.options.Ordered {
-			orderedCounters[h.Level]++
-			for level := h.Level + 1; level <= 6; level++ {
-				orderedCounters[level] = 0
-			}
-			marker = strconv.Itoa(orderedCounters[h.Level]) + "."
-		} else {
-			marker = "-"
-		}
-
-		var link string
-		if b.options.ShowAnchor {
-			link = "[" + h.Text + "](#" + h.AnchorLink + ")"
-		} else {
-			link = "[" + h.Text + "]"
-		}
-
-		// 预览模式：显示实际行号（基于干净内容）
-		if b.options.LineNumber && h.Line > 0 {
-			count := h.EndLine - h.Line + 1
-			if b.options.ShowPath && b.options.FilePath != "" {
-				link += fmt.Sprintf(" `%s:%d+%d`", b.options.FilePath, h.Line, count)
-			} else {
-				link += fmt.Sprintf(" `:%d+%d`", h.Line, count)
-			}
-		}
-
-		entry := indentStr + marker + " " + link
-		entries = append(entries, entry)
-	}
-
-	return entries
+	return renderTOCEntries(headers, b.options, minHeaderLevel(headers), func(h *Header) string {
+		return formatHeaderLineRange(b.options, h)
+	})
 }

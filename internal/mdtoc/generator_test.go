@@ -63,7 +63,7 @@ func TestGenerator_Generate(t *testing.T) {
 				{Level: 2, Text: "Section 1", AnchorLink: "section-1", Line: 11, EndLine: 20},
 			},
 			opts:     Options{MinLevel: 1, MaxLevel: 3, LineNumber: true, ShowAnchor: true},
-			expected: "- [Title](#title) `:1+10`\n  - [Section 1](#section-1) `:11+10`",
+			expected: "- [Title](#title) `:1+10=11`\n  - [Section 1](#section-1) `:11+10=21`",
 		},
 	}
 
@@ -151,7 +151,7 @@ func TestGenerator_GenerateSection(t *testing.T) {
 				},
 			},
 			opts:     Options{MinLevel: 2, MaxLevel: 3, LineNumber: true, ShowAnchor: true},
-			expected: "- [Section 1.1](#section-11) `:6+10`\n- [Section 1.2](#section-12) `:16+10`",
+			expected: "- [Section 1.1](#section-11) `:6+10=16`\n- [Section 1.2](#section-12) `:16+10=26`",
 		},
 	}
 
