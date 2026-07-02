@@ -13,3 +13,12 @@ repos:
       - id: check-merge-conflict
       - id: check-added-large-files
         args: ["--maxkb=512"]
+
+  - repo: local
+    hooks:
+      - id: update-markdown-toc
+        name: Update Markdown TOC
+        entry: bash -c 'fd -e md | mdtoc -i'
+        language: system
+        pass_filenames: false
+        files: \.md$
