@@ -1,7 +1,7 @@
 package root
 
 import (
-	"github.com/lwmacct/251202-mc-mdtoc/internal/config"
+	"github.com/lwmacct/251202-mdtoc/internal/config"
 	"github.com/lwmacct/251207-go-pkg-cfgm/pkg/cfgm"
 	"github.com/lwmacct/251207-go-pkg-version/pkg/version"
 	"github.com/urfave/cli/v3"

@@ -85,7 +85,7 @@ async function showInstallPrompt(): Promise<void> {
     case "Install with Go": {
       const terminal = vscode.window.createTerminal("mc-mdtoc install");
       terminal.show();
-      terminal.sendText("go install github.com/lwmacct/251202-mc-mdtoc/cmd/mc-mdtoc@latest");
+      terminal.sendText("go install github.com/lwmacct/251202-mdtoc/cmd/mc-mdtoc@latest");
       vscode.window.showInformationMessage("Running installation command. After it completes, reload the window.", "Reload Window").then((action) => {
         if (action === "Reload Window") {
           vscode.commands.executeCommand("workbench.action.reloadWindow");
@@ -95,7 +95,7 @@ async function showInstallPrompt(): Promise<void> {
     }
 
     case "View Documentation":
-      vscode.env.openExternal(vscode.Uri.parse("https://github.com/lwmacct/251202-mc-mdtoc"));
+      vscode.env.openExternal(vscode.Uri.parse("https://github.com/lwmacct/251202-mdtoc"));
       break;
 
     case "Configure Path":

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lwmacct/251202-mc-mdtoc/internal/mdtoc"
+	"github.com/lwmacct/251202-mdtoc/internal/mdtoc"
 )
 
 // TestTOC_GenerateFromContent 测试从内容生成 TOC 的核心功能

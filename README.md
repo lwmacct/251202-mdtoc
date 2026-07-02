@@ -31,7 +31,7 @@ Markdown TOC 生成工具，为 Markdown 文件自动生成符合规范的目录
 
 ```shell
 # 从 GitHub 安装
-go install github.com/lwmacct/251202-mc-mdtoc/cmd/mc-mdtoc@latest
+go install github.com/lwmacct/251202-mdtoc/cmd/mc-mdtoc@latest
 
 # 本地构建安装
 go install ./cmd/mc-mdtoc

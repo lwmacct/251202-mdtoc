@@ -34,7 +34,7 @@ Automatically generate and update Table of Contents for your Markdown files, sim
 This extension requires the `mc-mdtoc` CLI to be installed:
 
 ```bash
-go install github.com/lwmacct/251202-mc-mdtoc/cmd/mc-mdtoc@latest
+go install github.com/lwmacct/251202-mdtoc/cmd/mc-mdtoc@latest
 ```
 
 The extension will prompt you to install it if not found.
@@ -117,8 +117,8 @@ More content...
 
 ## Links
 
-- [CLI Documentation](https://github.com/lwmacct/251202-mc-mdtoc)
-- [Report Issues](https://github.com/lwmacct/251202-mc-mdtoc/issues)
+- [CLI Documentation](https://github.com/lwmacct/251202-mdtoc)
+- [Report Issues](https://github.com/lwmacct/251202-mdtoc/issues)
 
 ## License
 

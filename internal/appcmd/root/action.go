@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lwmacct/251202-mc-mdtoc/internal/mdtoc"
+	"github.com/lwmacct/251202-mdtoc/internal/mdtoc"
 	"github.com/lwmacct/251207-go-pkg-cfgm/pkg/cfgm"
 	"github.com/urfave/cli/v3"
 )

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/lwmacct/251202-mc-mdtoc/internal/appcmd/root"
+	"github.com/lwmacct/251202-mdtoc/internal/appcmd/root"
 )
 
 func main() {
