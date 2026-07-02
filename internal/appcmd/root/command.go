@@ -12,15 +12,15 @@ var (
 	usage    = cfgm.Schema(defaults).Command()
 )
 
-// Command 返回 mc-mdtoc 主命令
+// Command 返回 mdtoc 主命令
 var Command = &cli.Command{
-	Name:            "mc-mdtoc",
+	Name:            "mdtoc",
 	Usage:           "生成和查看 Markdown 文档的大纲 (TOC)",
 	Version:         version.AppVersion,
 	Commands:        []*cli.Command{version.Command},
 	HideHelpCommand: true,
-	UsageText: `mc-mdtoc [options] <file>...
-fd -e md | mc-mdtoc`,
+	UsageText: `mdtoc [options] <file>...
+fd -e md | mdtoc`,
 	Flags:  commandFlags(),
 	Action: action,
 }

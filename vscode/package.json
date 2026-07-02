@@ -1,6 +1,6 @@
 {
-  "name": "mc-mdtoc",
-  "displayName": "mc-mdtoc - Markdown TOC Generator",
+  "name": "mdtoc",
+  "displayName": "mdtoc - Markdown TOC Generator",
   "description": "Automatically generate and update Table of Contents for Markdown files",
   "version": "0.1.0",
   "publisher": "lwmacct",
@@ -34,24 +34,24 @@
   "contributes": {
     "commands": [
       {
-        "command": "mc-mdtoc.updateToc",
+        "command": "mdtoc.updateToc",
         "title": "Update TOC",
-        "category": "mc-mdtoc",
+        "category": "mdtoc",
         "icon": "$(list-tree)"
       },
       {
-        "command": "mc-mdtoc.deleteToc",
+        "command": "mdtoc.deleteToc",
         "title": "Delete TOC",
-        "category": "mc-mdtoc"
+        "category": "mdtoc"
       }
     ],
     "configuration": {
-      "title": "mc-mdtoc",
+      "title": "mdtoc",
       "properties": {
         "mcMdtoc.enable": {
           "type": "boolean",
           "default": true,
-          "description": "Enable/disable mc-mdtoc formatting"
+          "description": "Enable/disable mdtoc formatting"
         },
         "mcMdtoc.formatOnSave": {
           "type": "boolean",
@@ -61,7 +61,7 @@
         "mcMdtoc.cliPath": {
           "type": "string",
           "default": "",
-          "description": "Path to mc-mdtoc executable. Leave empty to use system PATH"
+          "description": "Path to mdtoc executable. Leave empty to use system PATH"
         },
         "mcMdtoc.globalMode": {
           "type": "boolean",
@@ -92,14 +92,14 @@
     "menus": {
       "editor/context": [
         {
-          "command": "mc-mdtoc.updateToc",
+          "command": "mdtoc.updateToc",
           "when": "resourceLangId == markdown",
           "group": "1_modification"
         }
       ],
       "editor/title": [
         {
-          "command": "mc-mdtoc.updateToc",
+          "command": "mdtoc.updateToc",
           "when": "resourceLangId == markdown",
           "group": "navigation"
         }
@@ -107,7 +107,7 @@
     },
     "keybindings": [
       {
-        "command": "mc-mdtoc.updateToc",
+        "command": "mdtoc.updateToc",
         "key": "ctrl+shift+t",
         "mac": "cmd+shift+t",
         "when": "resourceLangId == markdown"

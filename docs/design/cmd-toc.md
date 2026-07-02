@@ -21,8 +21,8 @@
 ## 命令行接口
 
 ```shell
-mc-mdtoc [options] <file>...
-   fd -e md | mc-mdtoc
+mdtoc [options] <file>...
+   fd -e md | mdtoc
 
 Options:
   -m, --min-level    最小标题层级 (默认 1)
@@ -63,23 +63,23 @@ Options:
 
 ```shell
 # 默认输出 (预览模式不显示锚点)
-mc-mdtoc README.md
+mdtoc README.md
 # - [标题] `:1+10`
 
 # 显示锚点链接
-mc-mdtoc -a README.md
+mdtoc -a README.md
 # - [标题](#标题) `:1+10`
 
 # 带文件路径
-mc-mdtoc -a -p README.md
+mdtoc -a -p README.md
 # - [标题](#标题) `README.md:1+10`
 
 # 禁用行号
-mc-mdtoc -a -L=false README.md
+mdtoc -a -L=false README.md
 # - [标题](#标题)
 
 # 写入文件时自动启用锚点链接
-mc-mdtoc -i README.md
+mdtoc -i README.md
 # 文件内容: - [标题](#标题) `:1+10`
 ```
 

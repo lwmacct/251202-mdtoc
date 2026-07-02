@@ -1,4 +1,4 @@
-# mc-mdtoc
+# mdtoc
 
 <!--TOC-->
 
@@ -31,10 +31,10 @@ Automatically generate and update Table of Contents for your Markdown files, sim
 
 ## Requirements
 
-This extension requires the `mc-mdtoc` CLI to be installed:
+This extension requires the `mdtoc` CLI to be installed:
 
 ```bash
-go install github.com/lwmacct/251202-mdtoc/cmd/mc-mdtoc@latest
+go install github.com/lwmacct/251202-mdtoc/cmd/mdtoc@latest
 ```
 
 The extension will prompt you to install it if not found.
@@ -50,21 +50,21 @@ The extension will prompt you to install it if not found.
 ### Manual Commands
 
 - `Ctrl+Shift+T` (Mac: `Cmd+Shift+T`) - Update TOC
-- Command Palette: "mc-mdtoc: Update TOC"
-- Command Palette: "mc-mdtoc: Delete TOC"
+- Command Palette: "mdtoc: Update TOC"
+- Command Palette: "mdtoc: Delete TOC"
 - Right-click context menu in Markdown files
 
 ## Configuration
 
-| Setting                | Default | Description                        |
-| ---------------------- | ------- | ---------------------------------- |
-| `mcMdtoc.enable`       | `true`  | Enable/disable the extension       |
-| `mcMdtoc.formatOnSave` | `false` | Auto-update TOC on save            |
-| `mcMdtoc.cliPath`      | `""`    | Custom path to mc-mdtoc executable |
-| `mcMdtoc.globalMode`   | `false` | Use global mode (single TOC)       |
-| `mcMdtoc.minLevel`     | `1`     | Minimum heading level (1-6)        |
-| `mcMdtoc.maxLevel`     | `3`     | Maximum heading level (1-6)        |
-| `mcMdtoc.ordered`      | `false` | Use ordered list (1. 2. 3.)        |
+| Setting                | Default | Description                     |
+| ---------------------- | ------- | ------------------------------- |
+| `mcMdtoc.enable`       | `true`  | Enable/disable the extension    |
+| `mcMdtoc.formatOnSave` | `false` | Auto-update TOC on save         |
+| `mcMdtoc.cliPath`      | `""`    | Custom path to mdtoc executable |
+| `mcMdtoc.globalMode`   | `false` | Use global mode (single TOC)    |
+| `mcMdtoc.minLevel`     | `1`     | Minimum heading level (1-6)     |
+| `mcMdtoc.maxLevel`     | `3`     | Maximum heading level (1-6)     |
+| `mcMdtoc.ordered`      | `false` | Use ordered list (1. 2. 3.)     |
 
 ### Recommended Settings
 
@@ -72,7 +72,7 @@ The extension will prompt you to install it if not found.
 {
   "[markdown]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "lwmacct.mc-mdtoc"
+    "editor.defaultFormatter": "lwmacct.mdtoc"
   }
 }
 ```

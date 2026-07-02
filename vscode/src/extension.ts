@@ -6,7 +6,7 @@ import { MdtocFormatter } from "./formatter";
 let outputChannel: vscode.OutputChannel;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-  outputChannel = vscode.window.createOutputChannel("mc-mdtoc");
+  outputChannel = vscode.window.createOutputChannel("mdtoc");
 
   const config = new Config();
   const cli = new MdtocCli(config, outputChannel);
@@ -20,13 +20,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider({ language: "markdown", scheme: "file" }, formatter));
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("mc-mdtoc.updateToc", () => {
+    vscode.commands.registerCommand("mdtoc.updateToc", () => {
       formatter.formatActiveDocument();
     }),
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("mc-mdtoc.deleteToc", () => {
+    vscode.commands.registerCommand("mdtoc.deleteToc", () => {
       formatter.deleteFromActiveDocument();
     }),
   );
@@ -71,21 +71,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   context.subscriptions.push(outputChannel);
 
-  outputChannel.appendLine("mc-mdtoc extension activated");
+  outputChannel.appendLine("mdtoc extension activated");
 }
 
 export function deactivate(): void {
-  outputChannel?.appendLine("mc-mdtoc extension deactivated");
+  outputChannel?.appendLine("mdtoc extension deactivated");
 }
 
 async function showInstallPrompt(): Promise<void> {
-  const selection = await vscode.window.showWarningMessage("mc-mdtoc CLI not found. Please install it to use this extension.", "Install with Go", "View Documentation", "Configure Path");
+  const selection = await vscode.window.showWarningMessage("mdtoc CLI not found. Please install it to use this extension.", "Install with Go", "View Documentation", "Configure Path");
 
   switch (selection) {
     case "Install with Go": {
-      const terminal = vscode.window.createTerminal("mc-mdtoc install");
+      const terminal = vscode.window.createTerminal("mdtoc install");
       terminal.show();
-      terminal.sendText("go install github.com/lwmacct/251202-mdtoc/cmd/mc-mdtoc@latest");
+      terminal.sendText("go install github.com/lwmacct/251202-mdtoc/cmd/mdtoc@latest");
       vscode.window.showInformationMessage("Running installation command. After it completes, reload the window.", "Reload Window").then((action) => {
         if (action === "Reload Window") {
           vscode.commands.executeCommand("workbench.action.reloadWindow");

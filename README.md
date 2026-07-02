@@ -1,4 +1,4 @@
-# mc-mdtoc
+# mdtoc
 
 Markdown TOC 生成工具，为 Markdown 文件自动生成符合规范的目录（Table of Contents）。
 
@@ -45,26 +45,26 @@ ln -sfn ~/go/bin/251202-mdtoc ~/.local/bin/mdtoc
 
 ```shell
 # 查看帮助
-mc-mdtoc --help
+mdtoc --help
 
 # 生成 TOC 到 stdout
-mc-mdtoc README.md
+mdtoc README.md
 
 # 原地更新文件 (在 <!--TOC--> 标记处插入)
-mc-mdtoc -i README.md
+mdtoc -i README.md
 
 # 显示文件路径 + 行号范围
-mc-mdtoc -p README.md
+mdtoc -p README.md
 # 输出: - [标题](#标题) `README.md:1+10`
 
 # 使用有序列表 + 指定层级
-mc-mdtoc -o -m 2 -M 4 README.md
+mdtoc -o -m 2 -M 4 README.md
 
 # 多文件处理
-mc-mdtoc -i docs/*.md
+mdtoc -i docs/*.md
 
 # 管道输入 (从 stdin 读取文件列表)
-fd -e md | mc-mdtoc -i
+fd -e md | mdtoc -i
 ```
 
 ## 命令选项
@@ -97,7 +97,7 @@ task -a
 ### 构建
 
 ```shell
-go build ./cmd/mc-mdtoc/
+go build ./cmd/mdtoc/
 ```
 
 ## 参考项目

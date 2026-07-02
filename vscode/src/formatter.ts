@@ -30,7 +30,7 @@ export class MdtocFormatter implements vscode.DocumentFormattingEditProvider {
 
     if (!result.success) {
       if (result.error) {
-        vscode.window.showWarningMessage(`mc-mdtoc: ${result.error}`);
+        vscode.window.showWarningMessage(`mdtoc: ${result.error}`);
       }
       return [];
     }
@@ -49,7 +49,7 @@ export class MdtocFormatter implements vscode.DocumentFormattingEditProvider {
   async formatActiveDocument(): Promise<boolean> {
     const editor = vscode.window.activeTextEditor;
     if (!editor || editor.document.languageId !== "markdown") {
-      vscode.window.showInformationMessage("mc-mdtoc: Please open a Markdown file first.");
+      vscode.window.showInformationMessage("mdtoc: Please open a Markdown file first.");
       return false;
     }
 
@@ -64,10 +64,10 @@ export class MdtocFormatter implements vscode.DocumentFormattingEditProvider {
 
     if (result.success) {
       await vscode.commands.executeCommand("workbench.action.files.revert");
-      vscode.window.showInformationMessage("mc-mdtoc: TOC updated successfully.");
+      vscode.window.showInformationMessage("mdtoc: TOC updated successfully.");
       return true;
     } else {
-      vscode.window.showErrorMessage(`mc-mdtoc: ${result.error || "Failed to update TOC"}`);
+      vscode.window.showErrorMessage(`mdtoc: ${result.error || "Failed to update TOC"}`);
       return false;
     }
   }
@@ -75,7 +75,7 @@ export class MdtocFormatter implements vscode.DocumentFormattingEditProvider {
   async deleteFromActiveDocument(): Promise<boolean> {
     const editor = vscode.window.activeTextEditor;
     if (!editor || editor.document.languageId !== "markdown") {
-      vscode.window.showInformationMessage("mc-mdtoc: Please open a Markdown file first.");
+      vscode.window.showInformationMessage("mdtoc: Please open a Markdown file first.");
       return false;
     }
 
@@ -90,10 +90,10 @@ export class MdtocFormatter implements vscode.DocumentFormattingEditProvider {
 
     if (result.success) {
       await vscode.commands.executeCommand("workbench.action.files.revert");
-      vscode.window.showInformationMessage("mc-mdtoc: TOC deleted successfully.");
+      vscode.window.showInformationMessage("mdtoc: TOC deleted successfully.");
       return true;
     } else {
-      vscode.window.showErrorMessage(`mc-mdtoc: ${result.error || "Failed to delete TOC"}`);
+      vscode.window.showErrorMessage(`mdtoc: ${result.error || "Failed to delete TOC"}`);
       return false;
     }
   }

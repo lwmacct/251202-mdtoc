@@ -31,12 +31,12 @@ export class MdtocCli {
 
     try {
       const which = process.platform === "win32" ? "where" : "which";
-      const result = execSync(`${which} mc-mdtoc`, { encoding: "utf-8" }).trim();
+      const result = execSync(`${which} mdtoc`, { encoding: "utf-8" }).trim();
       this.cliPath = result.split("\n")[0];
       this.log(`Found CLI in PATH: ${this.cliPath}`);
       return true;
     } catch {
-      this.log("mc-mdtoc CLI not found in PATH");
+      this.log("mdtoc CLI not found in PATH");
       return false;
     }
   }
@@ -84,7 +84,7 @@ export class MdtocCli {
         resolve({
           success: false,
           output: "",
-          error: "CLI not found. Please install mc-mdtoc.",
+          error: "CLI not found. Please install mdtoc.",
         });
         return;
       }
