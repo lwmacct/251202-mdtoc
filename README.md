@@ -37,8 +37,9 @@ go install github.com/lwmacct/251202-mdtoc@latest
 go install .
 
 # 设置别名
-ln -sfn ~/go/bin/251202-mdtoc /usr/local/bin/mdtoc
-ln -sfn ~/go/bin/251202-mdtoc ~/.local/bin/mdtoc
+_app_bin="$(go env GOPATH)/bin/251202-mdtoc"
+ln -sfn $_app_bin /usr/local/bin/mdtoc
+ln -sfn $_app_bin ~/.local/bin/mdtoc
 ```
 
 ## 使用示例
