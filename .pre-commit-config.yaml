@@ -19,6 +19,6 @@ repos:
       - id: update-markdown-toc
         name: Update Markdown TOC
         entry: bash -c 'fd -e md | mdtoc -i'
-        language: system
+        language: unsupported
+        always_run: true
         pass_filenames: false
-        files: \.md$
